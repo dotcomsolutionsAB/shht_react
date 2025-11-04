@@ -9,10 +9,17 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { AvTimerRounded, CloseRounded, Groups } from "@mui/icons-material";
+import {
+  AccountCircle,
+  AvTimerRounded,
+  Bookmarks,
+  CloseRounded,
+  Groups,
+  Receipt,
+  Settings,
+} from "@mui/icons-material";
 import { ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { usePathname } from "../hooks/usePathname";
-import { StudentsManagementIcon } from "../theme/overrides/CustomIcons";
 import useLayout from "../hooks/uesLayout";
 import SHHT_Logo from "../assets/logos/SHHT_Logo.png";
 import useAuth from "../hooks/useAuth";
@@ -21,10 +28,16 @@ const getIcon = (iconName) => {
   switch (iconName) {
     case "dashboard":
       return <AvTimerRounded />;
-    case "students":
-      return <StudentsManagementIcon />;
+    case "orders":
+      return <Bookmarks />;
+    case "invoices":
+      return <Receipt />;
+    case "clients":
+      return <AccountCircle />;
     case "users":
       return <Groups />;
+    case "settings":
+      return <Settings />;
     default:
       return null;
   }
@@ -76,8 +89,8 @@ const Sidebar = () => {
         <Box
           sx={{
             p: "10px",
-            bgcolor: "primary.light",
-            color: "primary.main",
+            // bgcolor: "primary.light",
+            // color: "primary.main",
             height: layout?.headerHeight,
             width: layout?.sidebarWidth,
             display: "flex",
@@ -120,14 +133,14 @@ const Sidebar = () => {
             )}
           </Box>
           <IconButton
-            sx={{
-              bgcolor: "primary.main",
-              color: "primary.contrastText",
-              "&:hover": {
-                bgcolor: "primary.mainHover",
-                color: "primary.contrastText",
-              },
-            }}
+            // sx={{
+            //   bgcolor: "primary.main",
+            //   color: "primary.contrastText",
+            //   "&:hover": {
+            //     bgcolor: "primary.mainHover",
+            //     color: "primary.contrastText",
+            //   },
+            // }}
             onClick={handleDrawerClose}
           >
             <CloseRounded />
@@ -152,12 +165,11 @@ const Sidebar = () => {
                 isSidebarExpanded || layout?.isLessThanMedium ? layout?.px : 0,
               width: "100%",
               minHeight: "50px",
-              borderBottom: `2px solid ${theme.palette.primary.contrastText}`,
               textDecoration: "none",
-              color: "primary.contrastText",
-              bgcolor: isActive ? "primary.mainActive" : "transparent",
+              color: "primary.main",
+              bgcolor: isActive ? "#E5E7EB" : "transparent",
               "&:hover": {
-                bgcolor: "primary.mainHover",
+                bgcolor: "#ccd3e0ff",
               },
             }}
           >

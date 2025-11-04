@@ -104,14 +104,15 @@ const Header = () => {
           <Box
             sx={{
               p: "10px",
-              bgcolor: "primary.light",
-              color: "primary.main",
+              bgcolor: "#F9FAFB",
               width: layout?.sidebarWidth,
               height: "100%",
               display: "flex",
               alignItems: "center",
               justifyContent: isSidebarExpanded ? "space-between" : "center",
               transition: "all 0.5s ease",
+              borderRight: "1px solid",
+              borderRightColor: "#D1D5DB",
             }}
           >
             {/* SHHT Logo */}

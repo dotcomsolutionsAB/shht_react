@@ -82,11 +82,13 @@ const MainLayout = () => {
             sx={{
               width: layout?.sidebarWidth,
               height: "100%",
-              bgcolor: "primary.main",
+              bgcolor: "#F9FAFB",
               overflowX: "hidden",
               overflowY: "auto",
               transition: "width 0.5s ease",
               zIndex: 10,
+              borderRight: "1px solid",
+              borderRightColor: "#D1D5DB",
             }}
           >
             <Sidebar />
