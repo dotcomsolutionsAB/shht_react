@@ -29,7 +29,7 @@ import MessageBox from "../../../components/error/message-box";
 import { Helmet } from "react-helmet-async";
 import UsersTableRow from "./users-table-row";
 import { getUsers } from "../../../services/admin/users.service";
-import AddNewUserModal from "./modals/add-new-user";
+import AddNewUserModal from "./modals/add-new-user-modal";
 
 // ----------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ const HEAD_LABEL = [
   { id: "mobile", label: "Mobile" },
   { id: "email", label: "Email" },
   { id: "role", label: "User Role" },
-  { id: "", label: "", align: "center" },
+  { id: "action", label: "Action", align: "center" },
 ];
 
 export default function Users() {

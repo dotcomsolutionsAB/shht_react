@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import AddNewCategoryModal from "./modals/add-new-category";
+import AddNewCategoryModal from "./modals/add-new-category-modal";
 import { useCallback, useState } from "react";
 import { useGetApi } from "../../../hooks/useGetApi";
 import { getCategories } from "../../../services/admin/category.service";
@@ -24,14 +24,14 @@ import TableNoData from "../../../components/table/table-no-data";
 const HEAD_LABEL = [
   { id: "id", label: "Id" },
   { id: "name", label: "Name" },
-  { id: "", label: "", align: "center" },
+  { id: "action", label: "Action", align: "center" },
 ];
 
 const Category = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  // api to get products list
+  // api to get category list
   const {
     dataCount: categoriesCount,
     dataList: categoriesList,

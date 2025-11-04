@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import ConfirmationDialog from "../../../components/confirmation-dialog/confirmation-dialog";
 import { deleteUser } from "../../../services/admin/users.service";
-import AddNewUserModal from "./modals/add-new-user";
+import AddNewUserModal from "./modals/add-new-user-modal";
 
 const UsersTableRow = ({
   row,
@@ -121,7 +121,7 @@ const UsersTableRow = ({
         </MenuItem>
       </Menu>
 
-      {/* Delete Product*/}
+      {/* Delete User*/}
       <ConfirmationDialog
         open={confirmationModalOpen}
         onCancel={handleConfirmationModalClose}
@@ -130,7 +130,7 @@ const UsersTableRow = ({
         title="Are you sure you want to delete this user?"
       />
 
-      {/* Edit Product*/}
+      {/* Edit User*/}
       <AddNewUserModal
         open={editModalOpen}
         onClose={handleEditModalClose}

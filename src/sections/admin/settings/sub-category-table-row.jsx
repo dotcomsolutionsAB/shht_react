@@ -6,10 +6,10 @@ import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import ConfirmationDialog from "../../../components/confirmation-dialog/confirmation-dialog";
-import AddNewCategoryModal from "./modals/add-new-category-modal";
-import { deleteCategory } from "../../../services/admin/category.service";
+import AddNewSubCategoryModal from "./modals/add-new-sub-category-modal";
+import { deleteSubCategory } from "../../../services/admin/sub-category.service";
 
-const CategoryTableRow = ({ row, refetch }) => {
+const SubCategoryTableRow = ({ row, refetch, categoriesList = [] }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -45,12 +45,12 @@ const CategoryTableRow = ({ row, refetch }) => {
 
   const handleDelete = useCallback(async () => {
     setIsDeleteLoading(true);
-    const response = await deleteCategory(row);
+    const response = await deleteSubCategory(row);
     setIsDeleteLoading(false);
 
     if (response?.code === 200) {
       handleConfirmationModalClose();
-      toast.success(response?.message || "Category deleted successfully!");
+      toast.success(response?.message || "Sub Category deleted successfully!");
       refetch();
     } else if (response?.code === 401) {
       logout(response);
@@ -64,6 +64,7 @@ const CategoryTableRow = ({ row, refetch }) => {
       <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
         <TableCell>{row?.id || "-"}</TableCell>
         <TableCell>{row?.name || "-"}</TableCell>
+        <TableCell>{row?.category?.name || "-"}</TableCell>
         <TableCell align="center">
           <IconButton onClick={handleMenuOpen}>
             <MoreVert />
@@ -99,29 +100,31 @@ const CategoryTableRow = ({ row, refetch }) => {
         </MenuItem>
       </Menu>
 
-      {/* Delete Category*/}
+      {/* Delete Sub Category*/}
       <ConfirmationDialog
         open={confirmationModalOpen}
         onCancel={handleConfirmationModalClose}
         onConfirm={handleDelete}
         isLoading={isDeleteLoading}
-        title="Are you sure you want to delete this category?"
+        title="Are you sure you want to delete this sub category?"
       />
 
-      {/* Edit Category*/}
-      <AddNewCategoryModal
+      {/* Edit Sub Category*/}
+      <AddNewSubCategoryModal
         open={editModalOpen}
         onClose={handleEditModalClose}
         refetch={refetch}
         detail={row}
+        categoriesList={categoriesList}
       />
     </>
   );
 };
 
-CategoryTableRow.propTypes = {
+SubCategoryTableRow.propTypes = {
   row: PropTypes.object,
   refetch: PropTypes.func,
+  categoriesList: PropTypes.array,
 };
 
-export default memo(CategoryTableRow);
+export default memo(SubCategoryTableRow);

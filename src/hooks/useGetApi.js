@@ -56,7 +56,7 @@ export const useGetApi = ({
       return;
     } // Skip if not initialized
 
-    if (body?.search) {
+    if (body?.search || body?.category) {
       timer = setTimeout(fetchData, debounceDelay);
     } else {
       fetchData();

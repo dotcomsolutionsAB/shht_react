@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { memo, useEffect, useState } from "react";
 import {
+  Autocomplete,
   Box,
   Button,
   CircularProgress,
@@ -13,14 +14,21 @@ import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
 import { CancelOutlined } from "@mui/icons-material";
 import {
-  createCategory,
-  updateCategory,
-} from "../../../../services/admin/category.service";
+  createSubCategory,
+  updateSubCategory,
+} from "../../../../services/admin/sub-category.service";
 
-const AddNewCategoryModal = ({ open, onClose, refetch, detail }) => {
+const AddNewSubCategoryModal = ({
+  open,
+  onClose,
+  refetch,
+  detail,
+  categoriesList = [],
+}) => {
   const { logout } = useAuth();
 
   const initialState = {
+    category: null,
     name: "",
   };
 
@@ -34,16 +42,23 @@ const AddNewCategoryModal = ({ open, onClose, refetch, detail }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData?.name?.trim() === "") {
-      toast.error("Category name is required.");
+    if (!formData?.category) {
+      toast.error("Category is required.");
       return;
     }
+    if (formData?.name?.trim() === "") {
+      toast.error("Sub Category name is required.");
+      return;
+    }
+
+    const payload = { ...formData, category: formData?.category?.id || "" };
+
     let response;
     setIsLoading(true);
     if (detail?.id) {
-      response = await updateCategory(formData);
+      response = await updateSubCategory(payload);
     } else {
-      response = await createCategory(formData);
+      response = await createSubCategory(payload);
     }
     setIsLoading(false);
 
@@ -52,7 +67,7 @@ const AddNewCategoryModal = ({ open, onClose, refetch, detail }) => {
       refetch();
       toast.success(
         response?.message ||
-          `Category ${detail?.id ? "updated" : "added"} successfully`
+          `Sub Category ${detail?.id ? "updated" : "added"} successfully`
       );
     } else if (response?.code === 401) {
       logout(response);
@@ -96,15 +111,38 @@ const AddNewCategoryModal = ({ open, onClose, refetch, detail }) => {
           fontWeight: 600,
         }}
       >
-        {detail?.id ? "Edit Category" : `Add New Category`}
+        {detail?.id ? "Edit Sub Category" : `Add New Sub Category`}
       </Box>
 
       <DialogContent>
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
+              <Autocomplete
+                options={categoriesList || []}
+                getOptionLabel={(option) => option?.name || ""}
+                renderInput={(params) => (
+                  <TextField {...params} label="Category" required />
+                )}
+                value={formData?.category || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "category", value: newValue },
+                  })
+                }
+              />
+              {/* <TextField
+                label="Category Id"
+                name="category"
+                fullWidth
+                required
+                value={formData?.category || ""}
+                onChange={handleChange}
+              /> */}
+            </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
-                label="Name"
+                label="Sub Category Name"
                 name="name"
                 fullWidth
                 required
@@ -142,11 +180,12 @@ const AddNewCategoryModal = ({ open, onClose, refetch, detail }) => {
   );
 };
 
-AddNewCategoryModal.propTypes = {
+AddNewSubCategoryModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
+  categoriesList: PropTypes.array,
 };
 
-export default memo(AddNewCategoryModal);
+export default memo(AddNewSubCategoryModal);
