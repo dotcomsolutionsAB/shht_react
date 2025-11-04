@@ -1,7 +1,7 @@
 import { Box, Card, CardContent, Grid } from "@mui/material";
 import Category from "../sections/admin/settings/category";
 import SubCategory from "../sections/admin/settings/sub-category";
-import Tags from "../sections/admin/settings/tags";
+import Tag from "../sections/admin/settings/tag";
 import Counter from "../sections/admin/settings/counter";
 
 const Settings = () => {
@@ -26,7 +26,7 @@ const Settings = () => {
         <Grid item xs={12} sm={6}>
           <Card sx={{ height: cardHeight }}>
             <CardContent>
-              <Tags />
+              <Tag />
             </CardContent>
           </Card>
         </Grid>
