@@ -68,7 +68,7 @@ const AdminDashboard = () => {
     errorMessage,
   } = useGetApi({
     apiFunction: getDashboardStats,
-    skip: true,
+    // skip: true,
   });
 
   return (
