@@ -28,8 +28,10 @@ import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
 import { Helmet } from "react-helmet-async";
 import UsersTableRow from "./users-table-row";
-import { getUsers } from "../../../services/admin/users.service";
+import { exportUser, getUsers } from "../../../services/admin/users.service";
 import AddNewUserModal from "./modals/add-new-user-modal";
+import { toast } from "react-toastify";
+import useAuth from "../../../hooks/useAuth";
 
 // ----------------------------------------------------------------------
 
@@ -47,10 +49,12 @@ const HEAD_LABEL = [
 ];
 
 export default function Users() {
+  const { logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [search, setSearch] = useState("");
+  const [isExportLoading, setIsExportLoading] = useState(false);
 
   // api to get users list
   const {
@@ -78,6 +82,34 @@ export default function Users() {
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
   }, []);
+
+  const handleExport = async () => {
+    setIsExportLoading(true);
+    const response = await exportUser({
+      search,
+    });
+    setIsExportLoading(false);
+
+    if (response?.code === 200) {
+      const link = document.createElement("a");
+      link.href = response?.data?.file_url || "";
+      link.target = "_blank"; // Open in a new tab
+      link.rel = "noopener noreferrer"; // Add security attributes
+
+      // Append the link to the document and trigger the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Remove the link after triggering the download
+      document.body.removeChild(link);
+
+      toast.success(response?.message || "File downloaded successfully!");
+    } else if (response?.code === 401) {
+      logout(response);
+    } else {
+      toast.error(response?.message || "Some error occurred.");
+    }
+  };
 
   const handleSearch = (event) => {
     setPage(0);
@@ -130,8 +162,14 @@ export default function Users() {
               + Add User
             </Button>
             {/* Excel Export */}
-            <Button color="success" variant="contained" sx={{ ml: 2 }}>
-              + Excel Export
+            <Button
+              color="success"
+              variant="contained"
+              sx={{ ml: 2 }}
+              onClick={handleExport}
+              disabled={isExportLoading}
+            >
+              {isExportLoading ? "Exporting..." : "+ Excel Export"}
             </Button>
           </Box>
           {/* Modal */}
