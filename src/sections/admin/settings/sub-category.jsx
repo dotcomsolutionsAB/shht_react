@@ -23,7 +23,6 @@ import AddNewSubCategoryModal from "./modals/add-new-sub-category-modal";
 import { getCategories } from "../../../services/admin/category.service";
 
 const HEAD_LABEL = [
-  { id: "id", label: "Id" },
   { id: "name", label: "Name" },
   { id: "category", label: "Category" },
   { id: "action", label: "Action", align: "center" },

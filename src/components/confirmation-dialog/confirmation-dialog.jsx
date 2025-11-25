@@ -27,9 +27,11 @@ const ConfirmationDialog = ({
       // onClose={onCancel}
       aria-labelledby="confirmation-dialog-title"
       aria-describedby="confirmation-dialog-description"
-      PaperProps={{
-        sx: {
-          minWidth: { xs: "80vw", sm: "300px" },
+      slotProps={{
+        paper: {
+          sx: {
+            minWidth: { xs: "80vw", sm: "300px" },
+          },
         },
       }}
     >

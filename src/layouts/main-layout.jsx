@@ -63,15 +63,19 @@ const MainLayout = () => {
             role="presentation"
             open={drawerOpen}
             onClose={handleDrawerClose}
-            PaperProps={{
-              sx: {
-                width: layout?.sidebarWidth,
-                height: "100%",
-                bgcolor: "primary.main",
-                overflowX: "hidden",
-                overflowY: "auto",
-                transition: "width 0.5s ease",
-                zIndex: 10,
+            slotProps={{
+              paper: {
+                sx: {
+                  width: layout?.sidebarWidth,
+                  height: "100%",
+                  bgcolor: "#F9FAFB",
+                  borderRight: "1px solid",
+                  borderRightColor: "#D1D5DB",
+                  overflowX: "hidden",
+                  overflowY: "auto",
+                  transition: "width 0.5s ease",
+                  zIndex: 10,
+                },
               },
             }}
           >

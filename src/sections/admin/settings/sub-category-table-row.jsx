@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
-import { Delete, MoreVert } from "@mui/icons-material";
+import { Delete, Edit, MoreVert } from "@mui/icons-material";
 import { IconButton, Menu, MenuItem, TableCell, TableRow } from "@mui/material";
-import Iconify from "../../../components/iconify/iconify";
 import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
@@ -62,7 +61,6 @@ const SubCategoryTableRow = ({ row, refetch, categoriesList = [] }) => {
   return (
     <>
       <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
-        <TableCell>{row?.id || "-"}</TableCell>
         <TableCell>{row?.name || "-"}</TableCell>
         <TableCell>{row?.category?.name || "-"}</TableCell>
         <TableCell align="center">
@@ -88,12 +86,12 @@ const SubCategoryTableRow = ({ row, refetch, categoriesList = [] }) => {
         sx={{ color: "primary.main" }}
       >
         <MenuItem onClick={handleEditModalOpen} sx={{ color: "primary.main" }}>
-          <Iconify icon="basil:edit-outline" sx={{ mr: 1 }} />
+          <Edit fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Edit
         </MenuItem>
         <MenuItem
           onClick={handleConfirmationModalOpen}
-          sx={{ color: "primary.main" }}
+          sx={{ color: "error.main" }}
         >
           <Delete fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Delete

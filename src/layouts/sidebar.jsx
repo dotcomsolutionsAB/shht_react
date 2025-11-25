@@ -1,14 +1,7 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import { NavLink } from "react-router-dom";
-import {
-  IconButton,
-  Menu,
-  MenuItem,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import {
   AccountCircle,
   AvTimerRounded,
@@ -45,7 +38,6 @@ const getIcon = (iconName) => {
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const theme = useTheme();
   const { userInfo, accessTo } = useAuth();
 
   const { layout, handleDrawerClose, isSidebarExpanded } = useLayout();
@@ -89,8 +81,6 @@ const Sidebar = () => {
         <Box
           sx={{
             p: "10px",
-            // bgcolor: "primary.light",
-            // color: "primary.main",
             height: layout?.headerHeight,
             width: layout?.sidebarWidth,
             display: "flex",
@@ -132,17 +122,7 @@ const Sidebar = () => {
               </Typography>
             )}
           </Box>
-          <IconButton
-            // sx={{
-            //   bgcolor: "primary.main",
-            //   color: "primary.contrastText",
-            //   "&:hover": {
-            //     bgcolor: "primary.mainHover",
-            //     color: "primary.contrastText",
-            //   },
-            // }}
-            onClick={handleDrawerClose}
-          >
+          <IconButton onClick={handleDrawerClose}>
             <CloseRounded />
           </IconButton>
         </Box>

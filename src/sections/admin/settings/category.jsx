@@ -22,7 +22,6 @@ import CategoryTableRow from "./category-table-row";
 import TableNoData from "../../../components/table/table-no-data";
 
 const HEAD_LABEL = [
-  { id: "id", label: "Id" },
   { id: "name", label: "Name" },
   { id: "action", label: "Action", align: "center" },
 ];

@@ -90,9 +90,9 @@ const AdminDashboard = () => {
           <MessageBox errorMessage={errorMessage} />
         ) : (
           <Grid container spacing={2}>
-            {LIST_ITEMS?.map((item) => {
+            {Object.keys(dashboardStats)?.map((item, index) => {
               return (
-                <Grid key={item.id} item xs={12} sm={6} md={4}>
+                <Grid key={index} item xs={12} sm={6} md={4}>
                   <Card
                     sx={{
                       height: cardHeight,
@@ -101,12 +101,21 @@ const AdminDashboard = () => {
                       justifyContent: "center",
                       gap: 2,
                       p: 2,
+                      cursor: "pointer",
                     }}
                   >
-                    <Typography variant="h6" sx={{ color: "text.disabled" }}>
-                      {item.label || ""}
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: "text.disabled",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {item.replaceAll("_", " ")}
                     </Typography>
-                    <Typography variant="h4">{item?.total || "0"}</Typography>
+                    <Typography variant="h4">
+                      {dashboardStats[item] || "0"}
+                    </Typography>
                   </Card>
                 </Grid>
               );

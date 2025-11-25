@@ -36,9 +36,13 @@ import AddNewUserModal from "./modals/add-new-user-modal";
 const HEAD_LABEL = [
   { id: "name", label: "Name" },
   { id: "username", label: "Username" },
+  { id: "role", label: "User Role" },
   { id: "mobile", label: "Mobile" },
   { id: "email", label: "Email" },
-  { id: "role", label: "User Role" },
+  { id: "order_views", label: "View" },
+  { id: "status", label: "Status" },
+  { id: "whatsapp_status", label: "WhatsApp" },
+  { id: "email_status", label: "Email" },
   { id: "action", label: "Action", align: "center" },
 ];
 
@@ -135,7 +139,7 @@ export default function Users() {
             open={modalOpen}
             onClose={handleModalClose}
             refetch={refetch}
-            userTypeList={["admin", "user"]}
+            userTypeList={["admin", "sales", "staff", "dispatch"]}
           />
         </Box>
 
@@ -178,7 +182,7 @@ export default function Users() {
                     dataCount={usersCount}
                     setPage={setPage}
                     row={row}
-                    userTypeList={["admin", "user"]}
+                    userTypeList={["admin", "sales", "staff", "dispatch"]}
                   />
                 ))}
 

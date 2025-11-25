@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
-import { Delete, MoreVert } from "@mui/icons-material";
+import { Delete, Edit, Key, MoreVert } from "@mui/icons-material";
 import { IconButton, Menu, MenuItem, TableCell, TableRow } from "@mui/material";
-import Iconify from "../../../components/iconify/iconify";
 import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import ConfirmationDialog from "../../../components/confirmation-dialog/confirmation-dialog";
 import { deleteUser } from "../../../services/admin/users.service";
 import AddNewUserModal from "./modals/add-new-user-modal";
+import ChangePasswordModal from "./modals/change-password-modal";
 
 const UsersTableRow = ({
   row,
@@ -23,6 +23,7 @@ const UsersTableRow = ({
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
   // open action menu open
   const handleMenuOpen = (event) => {
@@ -35,20 +36,29 @@ const UsersTableRow = ({
 
   const handleEditModalOpen = () => {
     setEditModalOpen(true);
+    handleMenuClose();
   };
 
   const handleEditModalClose = useCallback(() => {
     setEditModalOpen(false);
+  }, []);
+
+  const handleChangePasswordModalOpen = () => {
+    setChangePasswordModalOpen(true);
     handleMenuClose();
+  };
+
+  const handleChangePasswordModalClose = useCallback(() => {
+    setChangePasswordModalOpen(false);
   }, []);
 
   const handleConfirmationModalOpen = () => {
     setConfirmationModalOpen(true);
+    handleMenuClose();
   };
 
   const handleConfirmationModalClose = useCallback(() => {
     setConfirmationModalOpen(false);
-    handleMenuClose();
   }, []);
 
   const handleDelete = useCallback(async () => {
@@ -78,14 +88,20 @@ const UsersTableRow = ({
     <>
       <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
         <TableCell>{row?.name || "-"}</TableCell>
-
         <TableCell>{row?.username || "-"}</TableCell>
-
-        <TableCell>{row?.mobile || "-"}</TableCell>
-        <TableCell>{row?.email || "-"}</TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
           {row?.role || "-"}
         </TableCell>
+        <TableCell>{row?.mobile || "-"}</TableCell>
+        <TableCell>{row?.email || "-"}</TableCell>
+        <TableCell sx={{ textTransform: "capitalize" }}>
+          {row?.order_views || "-"}
+        </TableCell>
+
+        <TableCell>{row?.change_status === "1" ? "Yes" : "No"}</TableCell>
+        <TableCell>{row?.whatsapp_status === "1" ? "Yes" : "No"}</TableCell>
+        <TableCell>{row?.email_status === "1" ? "Yes" : "No"}</TableCell>
+
         <TableCell align="center">
           <IconButton onClick={handleMenuOpen}>
             <MoreVert />
@@ -106,15 +122,18 @@ const UsersTableRow = ({
           vertical: "top",
           horizontal: "right",
         }}
-        sx={{ color: "primary.main" }}
       >
-        <MenuItem onClick={handleEditModalOpen} sx={{ color: "primary.main" }}>
-          <Iconify icon="basil:edit-outline" sx={{ mr: 1 }} />
+        <MenuItem onClick={handleEditModalOpen}>
+          <Edit fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Edit
+        </MenuItem>
+        <MenuItem onClick={handleChangePasswordModalOpen}>
+          <Key fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
+          Change Password
         </MenuItem>
         <MenuItem
           onClick={handleConfirmationModalOpen}
-          sx={{ color: "primary.main" }}
+          sx={{ color: "error.main" }}
         >
           <Delete fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Delete
@@ -128,6 +147,13 @@ const UsersTableRow = ({
         onConfirm={handleDelete}
         isLoading={isDeleteLoading}
         title="Are you sure you want to delete this user?"
+      />
+
+      {/* Change Password*/}
+      <ChangePasswordModal
+        open={changePasswordModalOpen}
+        onClose={handleChangePasswordModalClose}
+        user_id={row?.id}
       />
 
       {/* Edit User*/}

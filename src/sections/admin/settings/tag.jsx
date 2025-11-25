@@ -22,7 +22,6 @@ import AddNewTagModal from "./modals/add-new-tag-modal";
 import TagTableRow from "./tag-table-row";
 
 const HEAD_LABEL = [
-  { id: "id", label: "Id" },
   { id: "name", label: "Name" },
   { id: "action", label: "Action", align: "center" },
 ];
