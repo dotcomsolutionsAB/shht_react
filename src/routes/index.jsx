@@ -9,6 +9,7 @@ import { IS_LOGGED_IN, USER_INFO, WEBSITE_NAME } from "../utils/constants";
 import { Box, Typography } from "@mui/material";
 import SHHT_Logo from "../assets/logos/SHHT_Logo.png";
 import Settings from "../pages/settings";
+import Clients from "../sections/admin/clients/clients";
 
 // Error Pages
 const Page404 = lazy(() => import("../pages/Page404"));
@@ -58,7 +59,7 @@ export default function Router() {
     }),
     ...withAccess(accessTo, "clients", {
       path: "clients",
-      element: <Users />,
+      element: <Clients />,
     }),
     ...withAccess(accessTo, "users", {
       path: "users",

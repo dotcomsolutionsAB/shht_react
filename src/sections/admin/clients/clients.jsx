@@ -27,28 +27,30 @@ import {
 import Loader from "../../../components/loader/loader";
 import MessageBox from "../../../components/error/message-box";
 import { Helmet } from "react-helmet-async";
-import UsersTableRow from "./users-table-row";
-import { exportUser, getUsers } from "../../../services/admin/users.service";
-import AddNewUserModal from "./modals/add-new-user-modal";
+import ClientsTableRow from "./clients-table-row";
+import AddNewClientModal from "./modals/add-new-client-modal";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
+import {
+  exportClient,
+  getClients,
+} from "../../../services/admin/clients.service";
 
 // ----------------------------------------------------------------------
 
 const HEAD_LABEL = [
-  { id: "name", label: "Name" },
-  { id: "username", label: "Username" },
-  { id: "role", label: "User Role" },
-  { id: "mobile", label: "Mobile" },
-  { id: "email", label: "Email" },
-  { id: "order_views", label: "View" },
-  { id: "status", label: "Status" },
-  { id: "whatsapp_status", label: "WhatsApp" },
-  { id: "email_status", label: "Email" },
+  { id: "name", label: "Client" },
+  { id: "category", label: "Category" },
+  { id: "sub_category", label: "Sub-Category" },
+  { id: "tags", label: "Tags" },
+  { id: "city", label: "City" },
+  { id: "state", label: "State" },
+  { id: "rm", label: "RM" },
+  { id: "sales_person", label: "Sales Person" },
   { id: "action", label: "Action", align: "center" },
 ];
 
-export default function Users() {
+export default function Clients() {
   const { logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
   const [page, setPage] = useState(0);
@@ -56,20 +58,24 @@ export default function Users() {
   const [search, setSearch] = useState("");
   const [isExportLoading, setIsExportLoading] = useState(false);
 
-  // api to get users list
+  const dataSendingToBackend = {
+    search,
+  };
+
+  // api to get clients list
   const {
-    dataCount: usersCount,
-    dataList: usersList,
+    dataCount: clientsCount,
+    dataList: clientsList,
     isLoading,
     isError,
     refetch,
     errorMessage,
   } = useGetApi({
-    apiFunction: getUsers,
+    apiFunction: getClients,
     body: {
       offset: page * rowsPerPage,
       limit: rowsPerPage,
-      search,
+      ...dataSendingToBackend,
     },
     dependencies: [page, rowsPerPage, search],
     debounceDelay: 500,
@@ -85,9 +91,7 @@ export default function Users() {
 
   const handleExport = async () => {
     setIsExportLoading(true);
-    const response = await exportUser({
-      search,
-    });
+    const response = await exportClient(dataSendingToBackend);
     setIsExportLoading(false);
 
     if (response?.code === 200) {
@@ -128,12 +132,12 @@ export default function Users() {
   };
 
   // if no search result is found
-  const notFound = !usersCount;
+  const notFound = !clientsCount;
 
   return (
     <>
       <Helmet>
-        <title>Users | SHHT</title>
+        <title>Clients | SHHT</title>
       </Helmet>
       <Card sx={{ p: 2, width: "100%" }}>
         <Box
@@ -157,9 +161,9 @@ export default function Users() {
           />
 
           <Box>
-            {/* Add User*/}
+            {/* Add Client*/}
             <Button variant="contained" onClick={handleModalOpen}>
-              + Add User
+              + Add Client
             </Button>
             {/* Excel Export */}
             <Button
@@ -173,7 +177,7 @@ export default function Users() {
             </Button>
           </Box>
           {/* Modal */}
-          <AddNewUserModal
+          <AddNewClientModal
             open={modalOpen}
             onClose={handleModalClose}
             refetch={refetch}
@@ -210,14 +214,14 @@ export default function Users() {
               </TableHead>
 
               <TableBody>
-                {usersList?.map((row, index) => (
-                  <UsersTableRow
+                {clientsList?.map((row, index) => (
+                  <ClientsTableRow
                     key={row?.id}
                     index={index}
                     refetch={refetch}
                     page={page}
                     rowsPerPage={rowsPerPage}
-                    dataCount={usersCount}
+                    dataCount={clientsCount}
                     setPage={setPage}
                     row={row}
                     userTypeList={["admin", "sales", "staff", "dispatch"]}
@@ -226,7 +230,7 @@ export default function Users() {
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, usersCount)}
+                  emptyRows={emptyRows(page, rowsPerPage, clientsCount)}
                 />
 
                 {notFound && <TableNoData query="" />}
@@ -240,7 +244,7 @@ export default function Users() {
         <TablePagination
           page={page}
           component="div"
-          count={usersCount}
+          count={clientsCount}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}

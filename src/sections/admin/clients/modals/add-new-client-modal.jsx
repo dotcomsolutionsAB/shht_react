@@ -23,7 +23,7 @@ import {
   updateUser,
 } from "../../../../services/admin/users.service";
 
-const AddNewUserModal = ({
+const AddNewClientModal = ({
   open,
   onClose,
   refetch,
@@ -61,7 +61,6 @@ const AddNewUserModal = ({
     let response;
     setIsLoading(true);
     if (detail?.id) {
-      delete formData.password;
       response = await updateUser(formData);
     } else {
       response = await createUser(formData);
@@ -93,8 +92,6 @@ const AddNewUserModal = ({
         mobile: detail?.mobile || "",
         email: detail?.email || "",
         role: detail?.role || "",
-        order_views: detail?.order_views || "",
-        change_status: detail?.change_status || "",
       });
     } else {
       setFormData(initialState);
@@ -159,40 +156,38 @@ const AddNewUserModal = ({
                 onChange={handleChange}
               />
             </Grid>
-            {detail?.id ? null : (
-              <Grid item xs={12} sm={6} md={4}>
-                <TextField
-                  type={`${showPassword ? "text" : "password"}`}
-                  label="Password"
-                  name="password"
-                  value={formData?.password || ""}
-                  onChange={handleChange}
-                  required={detail?.id ? false : true}
-                  fullWidth
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          {showPassword ? (
-                            <VisibilityOffRounded
-                              onClick={handleShowPassword}
-                              cursor="pointer"
-                              fontSize="24px"
-                            />
-                          ) : (
-                            <VisibilityRounded
-                              onClick={handleShowPassword}
-                              cursor="pointer"
-                              fontSize="24px"
-                            />
-                          )}
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-              </Grid>
-            )}
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                type={`${showPassword ? "text" : "password"}`}
+                label="Password"
+                name="password"
+                value={formData?.password || ""}
+                onChange={handleChange}
+                required={detail?.id ? false : true}
+                fullWidth
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {showPassword ? (
+                          <VisibilityOffRounded
+                            onClick={handleShowPassword}
+                            cursor="pointer"
+                            fontSize="24px"
+                          />
+                        ) : (
+                          <VisibilityRounded
+                            onClick={handleShowPassword}
+                            cursor="pointer"
+                            fontSize="24px"
+                          />
+                        )}
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Grid>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 label="Mobile"
@@ -216,9 +211,7 @@ const AddNewUserModal = ({
             <Grid item xs={12} sm={6} md={4}>
               <Autocomplete
                 options={userTypeList || []}
-                getOptionLabel={(option) =>
-                  option.charAt(0).toUpperCase() + option.slice(1)
-                }
+                getOptionLabel={(option) => option || ""}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -233,48 +226,7 @@ const AddNewUserModal = ({
                     target: { name: "role", value: newValue },
                   })
                 }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Autocomplete
-                options={["global", "self"]}
-                getOptionLabel={(option) =>
-                  option.charAt(0).toUpperCase() + option.slice(1)
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Order Views"
-                    name="order_views"
-                    required
-                  />
-                )}
-                value={formData?.order_views || null}
-                onChange={(_, newValue) =>
-                  handleChange({
-                    target: { name: "order_views", value: newValue },
-                  })
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Autocomplete
-                options={["1", "0"]}
-                getOptionLabel={(option) => (option === "1" ? "Yes" : "No")}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Change Status"
-                    name="change_status"
-                    required
-                  />
-                )}
-                value={formData?.change_status || null}
-                onChange={(_, newValue) =>
-                  handleChange({
-                    target: { name: "change_status", value: newValue },
-                  })
-                }
+                sx={{ textTransform: "capitalize" }}
               />
             </Grid>
           </Grid>
@@ -307,7 +259,7 @@ const AddNewUserModal = ({
   );
 };
 
-AddNewUserModal.propTypes = {
+AddNewClientModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   refetch: PropTypes.func,
@@ -315,4 +267,4 @@ AddNewUserModal.propTypes = {
   userTypeList: PropTypes.array,
 };
 
-export default memo(AddNewUserModal);
+export default memo(AddNewClientModal);
