@@ -16,7 +16,6 @@ const UsersTableRow = ({
   rowsPerPage,
   dataCount,
   setPage,
-  userTypeList,
 }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -162,7 +161,6 @@ const UsersTableRow = ({
         onClose={handleEditModalClose}
         refetch={refetch}
         detail={row}
-        userTypeList={userTypeList || []}
       />
     </>
   );
@@ -176,7 +174,6 @@ UsersTableRow.propTypes = {
   rowsPerPage: PropTypes.number,
   dataCount: PropTypes.number,
   setPage: PropTypes.func,
-  userTypeList: PropTypes.array,
 };
 
 export default memo(UsersTableRow);

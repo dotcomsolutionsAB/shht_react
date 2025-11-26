@@ -177,7 +177,6 @@ export default function Users() {
             open={modalOpen}
             onClose={handleModalClose}
             refetch={refetch}
-            userTypeList={["admin", "sales", "staff", "dispatch"]}
           />
         </Box>
 
@@ -220,7 +219,6 @@ export default function Users() {
                     dataCount={usersCount}
                     setPage={setPage}
                     row={row}
-                    userTypeList={["admin", "sales", "staff", "dispatch"]}
                   />
                 ))}
 

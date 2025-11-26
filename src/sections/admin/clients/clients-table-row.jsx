@@ -156,17 +156,17 @@ const ClientsTableRow = ({
         onCancel={handleConfirmationModalClose}
         onConfirm={handleDelete}
         isLoading={isDeleteLoading}
-        title="Are you sure you want to delete this user?"
+        title="Are you sure you want to delete this client?"
       />
 
       {/* View Contacts*/}
       <ViewContactsModal
         open={changeViewContactsModalOpen}
         onClose={handleChangeViewContactsModalClose}
-        user_id={row?.id}
+        client_id={row?.id}
       />
 
-      {/* Edit User*/}
+      {/* Edit Client*/}
       <AddNewClientModal
         open={editModalOpen}
         onClose={handleEditModalClose}

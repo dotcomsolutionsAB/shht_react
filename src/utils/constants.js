@@ -51,6 +51,8 @@ export const ADMIN_SIDEBAR_ITEMS = [
   },
 ];
 
+export const ROLE_LIST = ["admin", "sales", "staff", "dispatch"];
+
 export const REMOVE_UNDERSCORE = (text) => {
   return text
     ?.split(/[_\s]/)

@@ -22,7 +22,7 @@ import {
 import { changePassword } from "../../../../services/admin/users.service";
 import ChangePasswordModalSchema from "../../../../joi/change-password-modal-schema";
 
-const ViewContactsModal = ({ open, onClose, user_id }) => {
+const ViewContactsModal = ({ open, onClose, client_id }) => {
   const { logout } = useAuth();
 
   const passwordRef = useRef(null);
@@ -31,7 +31,7 @@ const ViewContactsModal = ({ open, onClose, user_id }) => {
   const initialState = {
     password: "",
     password_confirmation: "",
-    user_id,
+    client_id,
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -219,7 +219,7 @@ const ViewContactsModal = ({ open, onClose, user_id }) => {
 ViewContactsModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  user_id: PropTypes.number.isRequired,
+  client_id: PropTypes.number.isRequired,
 };
 
 export default memo(ViewContactsModal);

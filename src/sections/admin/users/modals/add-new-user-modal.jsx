@@ -22,14 +22,9 @@ import {
   createUser,
   updateUser,
 } from "../../../../services/admin/users.service";
+import { ROLE_LIST } from "../../../../utils/constants";
 
-const AddNewUserModal = ({
-  open,
-  onClose,
-  refetch,
-  detail,
-  userTypeList = [],
-}) => {
+const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
   const { logout } = useAuth();
 
   const initialState = {
@@ -61,7 +56,8 @@ const AddNewUserModal = ({
     let response;
     setIsLoading(true);
     if (detail?.id) {
-      delete formData.password;
+      delete formData?.password;
+      delete formData?.role;
       response = await updateUser(formData);
     } else {
       response = await createUser(formData);
@@ -89,10 +85,8 @@ const AddNewUserModal = ({
         id: detail?.id,
         name: detail?.name || "",
         username: detail?.username || "",
-        password: detail?.password || "",
         mobile: detail?.mobile || "",
         email: detail?.email || "",
-        role: detail?.role || "",
         order_views: detail?.order_views || "",
         change_status: detail?.change_status || "",
       });
@@ -213,28 +207,25 @@ const AddNewUserModal = ({
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4}>
-              <Autocomplete
-                options={userTypeList || []}
-                getOptionLabel={(option) =>
-                  option.charAt(0).toUpperCase() + option.slice(1)
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="User Type"
-                    name="role"
-                    required
-                  />
-                )}
-                value={formData?.role || null}
-                onChange={(_, newValue) =>
-                  handleChange({
-                    target: { name: "role", value: newValue },
-                  })
-                }
-              />
-            </Grid>
+            {detail?.id ? null : (
+              <Grid item xs={12} sm={6} md={4}>
+                <Autocomplete
+                  options={ROLE_LIST || []}
+                  getOptionLabel={(option) =>
+                    option.charAt(0).toUpperCase() + option.slice(1)
+                  }
+                  renderInput={(params) => (
+                    <TextField {...params} label="Role" name="role" required />
+                  )}
+                  value={formData?.role || null}
+                  onChange={(_, newValue) =>
+                    handleChange({
+                      target: { name: "role", value: newValue },
+                    })
+                  }
+                />
+              </Grid>
+            )}
             <Grid item xs={12} sm={6} md={4}>
               <Autocomplete
                 options={["global", "self"]}
@@ -312,7 +303,6 @@ AddNewUserModal.propTypes = {
   onClose: PropTypes.func,
   refetch: PropTypes.func,
   detail: PropTypes.object,
-  userTypeList: PropTypes.array,
 };
 
 export default memo(AddNewUserModal);
