@@ -108,9 +108,9 @@ const AddNewClientModal = ({
     };
     if (detail?.id) {
       // When editing, exclude contact_person from the request
-      submitData = Object.keys(formData).reduce((acc, key) => {
+      submitData = Object.keys(submitData).reduce((acc, key) => {
         if (key !== "contact_person") {
-          acc[key] = formData[key];
+          acc[key] = submitData[key];
         }
         return acc;
       }, {});
