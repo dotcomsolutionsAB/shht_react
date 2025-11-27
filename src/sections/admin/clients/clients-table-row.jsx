@@ -16,7 +16,9 @@ const ClientsTableRow = ({
   rowsPerPage,
   dataCount,
   setPage,
-  userTypeList,
+  categoryList,
+  subCategoryList,
+  tagsList,
 }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -172,7 +174,9 @@ const ClientsTableRow = ({
         onClose={handleEditModalClose}
         refetch={refetch}
         detail={row}
-        userTypeList={userTypeList || []}
+        categoryList={categoryList}
+        subCategoryList={subCategoryList}
+        tagsList={tagsList}
       />
     </>
   );
@@ -186,7 +190,9 @@ ClientsTableRow.propTypes = {
   rowsPerPage: PropTypes.number,
   dataCount: PropTypes.number,
   setPage: PropTypes.func,
-  userTypeList: PropTypes.array,
+  categoryList: PropTypes.array,
+  subCategoryList: PropTypes.array,
+  tagsList: PropTypes.array,
 };
 
 export default memo(ClientsTableRow);

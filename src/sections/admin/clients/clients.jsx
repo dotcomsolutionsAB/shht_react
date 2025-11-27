@@ -11,12 +11,16 @@ import TableNoData from "../../../components/table/table-no-data";
 import TableEmptyRows from "../../../components/table/table-empty-rows";
 
 import {
+  Autocomplete,
   Box,
+  Checkbox,
+  Chip,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { useGetApi } from "../../../hooks/useGetApi";
 import {
@@ -35,6 +39,13 @@ import {
   exportClient,
   getClients,
 } from "../../../services/admin/clients.service";
+import { getCategories } from "../../../services/admin/category.service";
+import { getSubCategories } from "../../../services/admin/sub-category.service";
+import { getTags } from "../../../services/admin/tags.service";
+import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { getUsers } from "../../../services/admin/users.service";
 
 // ----------------------------------------------------------------------
 
@@ -57,9 +68,23 @@ export default function Clients() {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [search, setSearch] = useState("");
   const [isExportLoading, setIsExportLoading] = useState(false);
+  const [filter, setFilter] = useState({
+    category: [],
+    sub_category: [],
+    tags: [],
+    rm: [],
+    date_from: null,
+    date_to: null,
+  });
 
   const dataSendingToBackend = {
     search,
+    category: filter?.category?.map((item) => item?.id).join(","),
+    sub_category: filter?.sub_category?.map((item) => item?.id).join(","),
+    tags: filter?.tags?.map((item) => item?.id).join(","),
+    rm: filter?.rm?.map((item) => item?.id).join(","),
+    date_from: filter?.date_from,
+    date_to: filter?.date_to,
   };
 
   // api to get clients list
@@ -77,8 +102,39 @@ export default function Clients() {
       limit: rowsPerPage,
       ...dataSendingToBackend,
     },
-    dependencies: [page, rowsPerPage, search],
+    dependencies: [
+      page,
+      rowsPerPage,
+      search,
+      filter?.category,
+      filter?.sub_category,
+      filter?.rm,
+      filter?.tags,
+      filter?.date_from,
+      filter?.date_to,
+    ],
     debounceDelay: 500,
+  });
+
+  // api to get category list
+  const { dataList: categoryList } = useGetApi({
+    apiFunction: getCategories,
+  });
+
+  // api to get sub category list
+  const { dataList: subCategoryList } = useGetApi({
+    apiFunction: getSubCategories,
+  });
+
+  // api to get tags list
+  const { dataList: tagsList } = useGetApi({
+    apiFunction: getTags,
+  });
+
+  // api to get rm list
+  const { dataList: rmList } = useGetApi({
+    apiFunction: getUsers,
+    body: { role: "staff" },
   });
 
   const handleModalOpen = () => {
@@ -88,6 +144,19 @@ export default function Clients() {
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
   }, []);
+
+  const handleChange = (e) => {
+    const { name, value, type } = e.target;
+    setFilter((preValue) => ({
+      ...preValue,
+      [name]:
+        type === "date"
+          ? value
+            ? dayjs(value).format("YYYY-MM-DD")
+            : null
+          : value,
+    }));
+  };
 
   const handleExport = async () => {
     setIsExportLoading(true);
@@ -143,24 +212,302 @@ export default function Clients() {
         <Box
           sx={{
             display: "flex",
+            flexWrap: "wrap",
             alignItems: "center",
             justifyContent: "space-between",
             gap: 1,
-            mt: 1,
             mb: 2,
             width: "100%",
           }}
         >
-          {/* Search  */}
-          <TextField
-            value={search || ""}
-            onChange={handleSearch}
-            placeholder="Search"
-            size="small"
-            sx={{ maxWidth: "300px" }}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            {/* Search  */}
+            <TextField
+              value={search || ""}
+              onChange={handleSearch}
+              placeholder="Search"
+              size="small"
+              sx={{ width: "200px" }}
+            />
 
-          <Box>
+            <Autocomplete
+              multiple
+              disableCloseOnSelect
+              limitTags={1}
+              options={categoryList || []}
+              getOptionLabel={(option) => option?.name || ""}
+              renderInput={(params) => (
+                <TextField {...params} label="Category" size="small" />
+              )}
+              renderOption={(props, option, { selected }) => (
+                <Tooltip title={option?.name || ""} arrow placement="right">
+                  <li {...props}>
+                    <Checkbox
+                      size="small"
+                      icon={<CheckBoxOutlineBlank fontSize="small" />}
+                      checkedIcon={<CheckBox fontSize="small" />}
+                      checked={selected}
+                    />
+                    <span
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "150px",
+                      }}
+                    >
+                      {option?.name || ""}
+                    </span>
+                  </li>
+                </Tooltip>
+              )}
+              renderTags={(selected) => [
+                selected[0] && (
+                  <Chip
+                    key={selected[0]?.id}
+                    label={
+                      <>
+                        {selected[0]?.name}
+                        {selected.length > 1 && (
+                          <span
+                            style={{ fontWeight: "bold", marginLeft: "5px" }}
+                          >
+                            {" "}
+                            +{selected.length - 1}
+                          </span>
+                        )}
+                      </>
+                    }
+                    size="small"
+                  />
+                ),
+              ]}
+              value={filter?.category || []}
+              onChange={(_, newValue) =>
+                handleChange({ target: { name: "category", value: newValue } })
+              }
+              sx={{ minWidth: "200px" }}
+            />
+            <Autocomplete
+              multiple
+              disableCloseOnSelect
+              limitTags={1}
+              options={subCategoryList || []}
+              getOptionLabel={(option) => option?.name || ""}
+              renderInput={(params) => (
+                <TextField {...params} label="Sub-Category" size="small" />
+              )}
+              renderOption={(props, option, { selected }) => (
+                <Tooltip title={option?.name || ""} arrow placement="right">
+                  <li {...props}>
+                    <Checkbox
+                      size="small"
+                      icon={<CheckBoxOutlineBlank fontSize="small" />}
+                      checkedIcon={<CheckBox fontSize="small" />}
+                      checked={selected}
+                    />
+                    <span
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "150px",
+                      }}
+                    >
+                      {option?.name || ""}
+                    </span>
+                  </li>
+                </Tooltip>
+              )}
+              renderTags={(selected) => [
+                selected[0] && (
+                  <Chip
+                    key={selected[0]?.id}
+                    label={
+                      <>
+                        {selected[0]?.name}
+                        {selected.length > 1 && (
+                          <span
+                            style={{ fontWeight: "bold", marginLeft: "5px" }}
+                          >
+                            {" "}
+                            +{selected.length - 1}
+                          </span>
+                        )}
+                      </>
+                    }
+                    size="small"
+                  />
+                ),
+              ]}
+              value={filter?.sub_category || []}
+              onChange={(_, newValue) =>
+                handleChange({
+                  target: { name: "sub_category", value: newValue },
+                })
+              }
+              sx={{ minWidth: "200px" }}
+            />
+            <Autocomplete
+              multiple
+              disableCloseOnSelect
+              limitTags={1}
+              options={rmList || []}
+              getOptionLabel={(option) => option?.name || ""}
+              renderInput={(params) => (
+                <TextField {...params} label="RM" size="small" />
+              )}
+              renderOption={(props, option, { selected }) => (
+                <Tooltip title={option?.name || ""} arrow placement="right">
+                  <li {...props}>
+                    <Checkbox
+                      size="small"
+                      icon={<CheckBoxOutlineBlank fontSize="small" />}
+                      checkedIcon={<CheckBox fontSize="small" />}
+                      checked={selected}
+                    />
+                    <span
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "150px",
+                      }}
+                    >
+                      {option?.name || ""}
+                    </span>
+                  </li>
+                </Tooltip>
+              )}
+              renderTags={(selected) => [
+                selected[0] && (
+                  <Chip
+                    key={selected[0]?.id}
+                    label={
+                      <>
+                        {selected[0]?.name}
+                        {selected.length > 1 && (
+                          <span
+                            style={{ fontWeight: "bold", marginLeft: "5px" }}
+                          >
+                            {" "}
+                            +{selected.length - 1}
+                          </span>
+                        )}
+                      </>
+                    }
+                    size="small"
+                  />
+                ),
+              ]}
+              value={filter?.rm || []}
+              onChange={(_, newValue) =>
+                handleChange({ target: { name: "rm", value: newValue } })
+              }
+              sx={{ minWidth: "200px" }}
+            />
+            <Autocomplete
+              multiple
+              disableCloseOnSelect
+              limitTags={1}
+              options={tagsList || []}
+              getOptionLabel={(option) => option?.name || ""}
+              renderInput={(params) => (
+                <TextField {...params} label="Tags" size="small" />
+              )}
+              renderOption={(props, option, { selected }) => (
+                <Tooltip title={option?.name || ""} arrow placement="right">
+                  <li {...props}>
+                    <Checkbox
+                      size="small"
+                      icon={<CheckBoxOutlineBlank fontSize="small" />}
+                      checkedIcon={<CheckBox fontSize="small" />}
+                      checked={selected}
+                    />
+                    <span
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "150px",
+                      }}
+                    >
+                      {option?.name || ""}
+                    </span>
+                  </li>
+                </Tooltip>
+              )}
+              renderTags={(selected) => [
+                selected[0] && (
+                  <Chip
+                    key={selected[0]?.id}
+                    label={
+                      <>
+                        {selected[0]?.name}
+                        {selected.length > 1 && (
+                          <span
+                            style={{ fontWeight: "bold", marginLeft: "5px" }}
+                          >
+                            {" "}
+                            +{selected.length - 1}
+                          </span>
+                        )}
+                      </>
+                    }
+                    size="small"
+                  />
+                ),
+              ]}
+              value={filter?.tags || []}
+              onChange={(_, newValue) =>
+                handleChange({ target: { name: "tags", value: newValue } })
+              }
+              sx={{ minWidth: "200px" }}
+            />
+
+            <DatePicker
+              label="Date From"
+              slotProps={{
+                textField: {
+                  size: "small",
+                  sx: { width: "200px" },
+                },
+              }}
+              disableFuture
+              value={filter?.date_from ? dayjs(filter?.date_from) : null}
+              onChange={(newDate) =>
+                handleChange({
+                  target: { name: "date_from", value: newDate, type: "date" },
+                })
+              }
+            />
+
+            <DatePicker
+              label="Date To"
+              slotProps={{
+                textField: {
+                  size: "small",
+                  sx: { width: "200px" },
+                },
+              }}
+              disableFuture
+              value={filter?.date_to ? dayjs(filter?.date_to) : null}
+              onChange={(newDate) =>
+                handleChange({
+                  target: { name: "date_to", value: newDate, type: "date" },
+                })
+              }
+            />
+          </Box>
+
+          <Box sx={{ ml: "auto" }}>
             {/* Add Client*/}
             <Button variant="contained" onClick={handleModalOpen}>
               + Add Client
@@ -181,7 +528,10 @@ export default function Clients() {
             open={modalOpen}
             onClose={handleModalClose}
             refetch={refetch}
-            userTypeList={["admin", "sales", "staff", "dispatch"]}
+            categoryList={categoryList}
+            subCategoryList={subCategoryList}
+            tagsList={tagsList}
+            rmList={rmList}
           />
         </Box>
 
@@ -224,7 +574,9 @@ export default function Clients() {
                     dataCount={clientsCount}
                     setPage={setPage}
                     row={row}
-                    userTypeList={["admin", "sales", "staff", "dispatch"]}
+                    categoryList={categoryList}
+                    subCategoryList={subCategoryList}
+                    tagsList={tagsList}
                   />
                 ))}
 
@@ -233,7 +585,7 @@ export default function Clients() {
                   emptyRows={emptyRows(page, rowsPerPage, clientsCount)}
                 />
 
-                {notFound && <TableNoData query="" />}
+                {notFound && <TableNoData query={search} />}
               </TableBody>
             </Table>
           </TableContainer>
