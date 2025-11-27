@@ -19,6 +19,8 @@ const ClientsTableRow = ({
   categoryList,
   subCategoryList,
   tagsList,
+  rmList,
+  salesPersonList,
 }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -177,6 +179,8 @@ const ClientsTableRow = ({
         categoryList={categoryList}
         subCategoryList={subCategoryList}
         tagsList={tagsList}
+        rmList={rmList}
+        salesPersonList={salesPersonList}
       />
     </>
   );
@@ -193,6 +197,8 @@ ClientsTableRow.propTypes = {
   categoryList: PropTypes.array,
   subCategoryList: PropTypes.array,
   tagsList: PropTypes.array,
+  rmList: PropTypes.array,
+  salesPersonList: PropTypes.array,
 };
 
 export default memo(ClientsTableRow);

@@ -137,6 +137,12 @@ export default function Clients() {
     body: { role: "staff" },
   });
 
+  // api to get sales person list
+  const { dataList: salesPersonList } = useGetApi({
+    apiFunction: getUsers,
+    body: { role: "sales" },
+  });
+
   const handleModalOpen = () => {
     setModalOpen(true);
   };
@@ -532,6 +538,7 @@ export default function Clients() {
             subCategoryList={subCategoryList}
             tagsList={tagsList}
             rmList={rmList}
+            salesPersonList={salesPersonList}
           />
         </Box>
 
@@ -577,6 +584,8 @@ export default function Clients() {
                     categoryList={categoryList}
                     subCategoryList={subCategoryList}
                     tagsList={tagsList}
+                    rmList={rmList}
+                    salesPersonList={salesPersonList}
                   />
                 ))}
 

@@ -31,6 +31,8 @@ const getInitialState = () => ({
   city: "",
   state: "",
   pincode: "",
+  rm: null,
+  sales_person: null,
   contact_person: [
     {
       id: Date.now(),
@@ -51,6 +53,7 @@ const AddNewClientModal = ({
   subCategoryList = [],
   tagsList = [],
   rmList = [],
+  salesPersonList = [],
 }) => {
   const { logout } = useAuth();
 
@@ -63,7 +66,7 @@ const AddNewClientModal = ({
     const { name, value } = e.target;
 
     if (field === "contact_person" && index !== null) {
-      const updatedContactPersons = formData.contact_person.map((item, i) =>
+      const updatedContactPersons = formData.contact_person?.map((item, i) =>
         i === index ? { ...item, [name]: value } : item
       );
       setFormData((preValue) => ({
@@ -104,6 +107,8 @@ const AddNewClientModal = ({
       ...formData,
       category: formData?.category?.id,
       sub_category: formData?.sub_category?.id,
+      rm: formData?.rm?.id,
+      sales_person: formData?.sales_person?.id,
       tags: formData?.tags?.map((tag) => tag.id).join(","),
     };
     if (detail?.id) {
@@ -156,6 +161,8 @@ const AddNewClientModal = ({
         city: detail?.city || "",
         state: detail?.state || "",
         pincode: detail?.pincode || "",
+        rm: detail?.rm || null,
+        sales_person: detail?.sales_person || null,
       });
     } else {
       setFormData(getInitialState());
@@ -350,6 +357,41 @@ const AddNewClientModal = ({
                 onChange={handleChange}
               />
             </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Autocomplete
+                options={rmList || []}
+                getOptionLabel={(option) => option.name || ""}
+                renderInput={(params) => (
+                  <TextField {...params} label="RM" name="rm" required />
+                )}
+                value={formData?.rm || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "rm", value: newValue },
+                  })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Autocomplete
+                options={salesPersonList || []}
+                getOptionLabel={(option) => option.name || ""}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Sales Person"
+                    name="sales_person"
+                    required
+                  />
+                )}
+                value={formData?.sales_person || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "sales_person", value: newValue },
+                  })
+                }
+              />
+            </Grid>
             {!detail?.id && (
               <>
                 <Grid item xs={12}>
@@ -498,6 +540,7 @@ AddNewClientModal.propTypes = {
   subCategoryList: PropTypes.array,
   tagsList: PropTypes.array,
   rmList: PropTypes.array,
+  salesPersonList: PropTypes.array,
 };
 
 export default memo(AddNewClientModal);
