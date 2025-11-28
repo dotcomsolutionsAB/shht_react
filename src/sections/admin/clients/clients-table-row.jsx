@@ -7,7 +7,11 @@ import useAuth from "../../../hooks/useAuth";
 import ConfirmationDialog from "../../../components/confirmation-dialog/confirmation-dialog";
 import AddNewClientModal from "./modals/add-new-client-modal";
 import ViewContactsModal from "./modals/view-contacts-modal";
-import { deleteClient } from "../../../services/admin/clients.service";
+import {
+  deleteClient,
+  getContactPersons,
+} from "../../../services/admin/clients.service";
+import { useGetApi } from "../../../hooks/useGetApi";
 
 const ClientsTableRow = ({
   row,
@@ -30,6 +34,27 @@ const ClientsTableRow = ({
   const [changeViewContactsModalOpen, setChangeViewContactsModal] =
     useState(false);
 
+  const [selectedClientId, setSelectedClientId] = useState(null);
+
+  // api to get contact person list
+  const {
+    dataList: contactPersonList,
+    dataCount: contactPersonsCount,
+    isLoading: isContactPersonsLoading,
+    isError: isContactPersonsError,
+    refetch: refetchContactPersons,
+    errorMessage: errorContactPersonsMessage,
+  } = useGetApi({
+    apiFunction: getContactPersons,
+    body: {
+      offset: 0,
+      limit: 100,
+      client: selectedClientId || "",
+    },
+    skip: !selectedClientId,
+    dependencies: [selectedClientId],
+  });
+
   // open action menu open
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -50,11 +75,13 @@ const ClientsTableRow = ({
 
   const handleChangeViewContactsModalOpen = () => {
     setChangeViewContactsModal(true);
+    setSelectedClientId(row?.id);
     handleMenuClose();
   };
 
   const handleChangeViewContactsModalClose = useCallback(() => {
     setChangeViewContactsModal(false);
+    setSelectedClientId(null);
   }, []);
 
   const handleConfirmationModalOpen = () => {
@@ -168,6 +195,13 @@ const ClientsTableRow = ({
         open={changeViewContactsModalOpen}
         onClose={handleChangeViewContactsModalClose}
         client_id={row?.id}
+        rmList={rmList}
+        contactPersonList={contactPersonList}
+        contactPersonsCount={contactPersonsCount}
+        isContactPersonsLoading={isContactPersonsLoading}
+        isContactPersonsError={isContactPersonsError}
+        refetchContactPersons={refetchContactPersons}
+        errorContactPersonsMessage={errorContactPersonsMessage}
       />
 
       {/* Edit Client*/}

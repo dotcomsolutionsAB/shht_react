@@ -1,98 +1,61 @@
 import PropTypes from "prop-types";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo } from "react";
 import {
   Box,
-  Button,
-  CircularProgress,
   Dialog,
-  DialogActions,
   DialogContent,
-  Grid,
-  InputAdornment,
-  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TableSortLabel,
   Typography,
 } from "@mui/material";
-import { toast } from "react-toastify";
-import useAuth from "../../../../hooks/useAuth";
-import {
-  CancelOutlined,
-  VisibilityOffRounded,
-  VisibilityRounded,
-} from "@mui/icons-material";
-import { changePassword } from "../../../../services/admin/users.service";
-import ChangePasswordModalSchema from "../../../../joi/change-password-modal-schema";
+import { CancelOutlined } from "@mui/icons-material";
+import Loader from "../../../../components/loader/loader";
+import MessageBox from "../../../../components/error/message-box";
+import ViewContactsModalTableRow from "./view-contacts-modal-table-row";
+import TableNoData from "../../../../components/table/table-no-data";
 
-const ViewContactsModal = ({ open, onClose, client_id }) => {
-  const { logout } = useAuth();
+const HEAD_LABEL = [
+  { id: "name", label: "Name" },
+  { id: "mobile", label: "Mobile" },
+  { id: "email", label: "Email" },
+  { id: "rm", label: "RM" },
+  { id: "action", label: "Action", align: "center" },
+];
 
-  const passwordRef = useRef(null);
-  const passwordConfirmationRef = useRef(null);
+const ViewContactsModal = ({
+  open,
+  onClose,
+  client_id,
+  rmList,
+  contactPersonList,
+  contactPersonsCount,
+  isContactPersonsLoading,
+  isContactPersonsError,
+  refetchContactPersons,
+  errorContactPersonsMessage,
+}) => {
+  // if no search result is found
+  const notFound = !contactPersonsCount;
 
-  const initialState = {
-    password: "",
-    password_confirmation: "",
-    client_id,
-  };
-
-  const [formData, setFormData] = useState(initialState);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirmation, setShowPasswordConfirmation] =
-    useState(false);
-
-  const handleShowPassword = () => {
-    setShowPassword((preValue) => !preValue);
-  };
-
-  const handleShowPasswordConfirmation = () => {
-    setShowPasswordConfirmation((preValue) => !preValue);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((preValue) => ({ ...preValue, [name]: value }));
-    if (name === "password" && e.key === "Enter") {
-      passwordConfirmationRef.current.focus();
-    }
-    if (name === "password_confirmation" && e.key === "Enter") {
-      handleChangePassword();
-    }
-  };
-
-  // validation from joi
-  const { error } = ChangePasswordModalSchema.validate(formData);
-
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (error) {
-      error?.details?.forEach((err) => {
-        toast.error(err.message);
-      });
-    } else {
-      setIsLoading(true);
-      const response = await changePassword(formData);
-      setIsLoading(false);
-
-      if (response?.code === 200) {
-        setFormData(initialState);
-        toast.success(response?.message || `Password changed successfully`);
-      } else if (response?.code === 401) {
-        logout(response);
-      } else {
-        toast.error(response?.message || "Some error occurred.");
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (passwordRef.current) {
-      passwordRef.current.focus();
-    }
-  }, []);
   return (
-    <Dialog open={open} onClose={!isLoading ? onClose : null} maxWidth="sm">
+    <Dialog
+      open={open}
+      onClose={!isContactPersonsLoading ? onClose : null}
+      slotProps={{
+        paper: {
+          sx: {
+            minWidth: { xs: "95vw", sm: "550px", md: "800px", lg: "1100px" },
+          },
+        },
+      }}
+    >
       <Box
-        id="change-password-dialog-title"
+        id="view-contacts-dialog-title"
         sx={{
           bgcolor: "primary.main",
           color: "primary.contrastText",
@@ -102,116 +65,63 @@ const ViewContactsModal = ({ open, onClose, client_id }) => {
           p: 1.5,
         }}
       >
-        <Typography variant="h5">Change Password</Typography>
+        <Typography variant="h5">View Contacts</Typography>
         <CancelOutlined
           sx={{
             cursor: "pointer",
           }}
-          onClick={!isLoading ? onClose : null}
+          onClick={!isContactPersonsLoading ? onClose : null}
         />
       </Box>
 
       <DialogContent>
-        <Box
-          id="changePasswordForm"
-          component="form"
-          onSubmit={handleChangePassword}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="New Password"
-                name="password"
-                type={`${showPassword ? "text" : "password"}`}
-                required
-                fullWidth
-                inputRef={passwordRef}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {showPassword ? (
-                          <VisibilityOffRounded
-                            onClick={handleShowPassword}
-                            cursor="pointer"
-                            fontSize="24px"
-                          />
-                        ) : (
-                          <VisibilityRounded
-                            onClick={handleShowPassword}
-                            cursor="pointer"
-                            fontSize="24px"
-                          />
-                        )}
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-                value={formData?.password || ""}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Re-enter New Password"
-                name="password_confirmation"
-                type={`${showPasswordConfirmation ? "text" : "password"}`}
-                required
-                fullWidth
-                inputRef={passwordConfirmationRef}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {showPasswordConfirmation ? (
-                          <VisibilityOffRounded
-                            onClick={handleShowPasswordConfirmation}
-                            cursor="pointer"
-                            fontSize="24px"
-                          />
-                        ) : (
-                          <VisibilityRounded
-                            onClick={handleShowPasswordConfirmation}
-                            cursor="pointer"
-                            fontSize="24px"
-                          />
-                        )}
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-                value={formData?.password_confirmation || ""}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
-        </Box>
+        {/* Table */}
+        {isContactPersonsLoading ? (
+          <Loader />
+        ) : isContactPersonsError ? (
+          <MessageBox errorMessage={errorContactPersonsMessage} />
+        ) : (
+          <TableContainer sx={{ overflowY: "unset" }}>
+            <Table sx={{ minWidth: 800 }}>
+              <TableHead>
+                <TableRow>
+                  {HEAD_LABEL?.map((headCell) => (
+                    <TableCell
+                      key={headCell?.id}
+                      align={headCell?.align || "left"}
+                      sx={{
+                        width: headCell?.width,
+                        minWidth: headCell?.minWidth,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <TableSortLabel hideSortIcon>
+                        {headCell?.label}
+                      </TableSortLabel>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {contactPersonList?.map((row, index) => (
+                  <ViewContactsModalTableRow
+                    key={row?.id}
+                    index={index}
+                    refetch={refetchContactPersons}
+                    dataCount={contactPersonsCount}
+                    row={row}
+                    rmList={rmList}
+                    client_id={client_id}
+                  />
+                ))}
+
+                {notFound && <TableNoData query="" />}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </DialogContent>
-
-      <DialogActions>
-        <Button
-          variant="outlined"
-          size="large"
-          disabled={isLoading}
-          onClick={onClose}
-        >
-          Cancel
-        </Button>
-
-        <Button
-          type="submit"
-          variant="contained"
-          size="large"
-          disabled={isLoading}
-          form="changePasswordForm"
-        >
-          {isLoading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Update"
-          )}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };
@@ -220,6 +130,13 @@ ViewContactsModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   client_id: PropTypes.number.isRequired,
+  rmList: PropTypes.array.isRequired,
+  contactPersonList: PropTypes.array.isRequired,
+  contactPersonsCount: PropTypes.number.isRequired,
+  isContactPersonsLoading: PropTypes.bool.isRequired,
+  isContactPersonsError: PropTypes.bool.isRequired,
+  refetchContactPersons: PropTypes.func.isRequired,
+  errorContactPersonsMessage: PropTypes.string.isRequired,
 };
 
 export default memo(ViewContactsModal);
