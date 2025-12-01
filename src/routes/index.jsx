@@ -2,24 +2,25 @@ import { useEffect, Suspense, lazy } from "react";
 import { Navigate, useRoutes } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import { Box, Typography } from "@mui/material";
+
+import SHHT_Logo from "../assets/logos/SHHT_Logo.png";
+import { IS_LOGGED_IN, USER_INFO, WEBSITE_NAME } from "../utils/constants";
+
 import useAuth from "../hooks/useAuth";
 import MainLayout from "../layouts/main-layout";
 
-import { IS_LOGGED_IN, USER_INFO, WEBSITE_NAME } from "../utils/constants";
-import { Box, Typography } from "@mui/material";
-import SHHT_Logo from "../assets/logos/SHHT_Logo.png";
-import Settings from "../pages/settings";
-import Clients from "../sections/admin/clients/clients";
-
-// Error Pages
-const Page404 = lazy(() => import("../pages/Page404"));
 const Login = lazy(() => import("../pages/login"));
-const ChangePassword = lazy(() => import("../pages/change-password"));
-
-// Dashboards
 const AdminDashboard = lazy(() => import("../pages/admin-dashboard"));
+const Settings = lazy(() => import("../pages/settings"));
+const Page404 = lazy(() => import("../pages/Page404"));
+// const ChangePassword = lazy(() => import("../pages/change-password"));
 
 const Users = lazy(() => import("../sections/admin/users/users"));
+const Clients = lazy(() => import("../sections/admin/clients/clients"));
+const Invoices = lazy(() => import("../sections/admin/invoices/invoices"));
+
+//==============================================================
 
 function withAccess(accessTo = [], routeKey, route) {
   if (accessTo?.[0] === "all") {
@@ -55,7 +56,7 @@ export default function Router() {
     }),
     ...withAccess(accessTo, "invoices", {
       path: "invoices",
-      element: <Users />,
+      element: <Invoices />,
     }),
     ...withAccess(accessTo, "clients", {
       path: "clients",
@@ -69,7 +70,7 @@ export default function Router() {
       path: "settings",
       element: <Settings />,
     }),
-    { path: "change-password", element: <ChangePassword /> },
+    // { path: "change-password", element: <ChangePassword /> },
   ].filter(Boolean);
 
   const routes = useRoutes([

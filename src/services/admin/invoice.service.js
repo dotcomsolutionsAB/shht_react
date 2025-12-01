@@ -18,3 +18,6 @@ export const updateInvoice = async (body) =>
 
 export const deleteInvoice = async (body) =>
   await deleteRequest(`${INVOICE_PATH}/delete/${body?.id}`);
+
+export const exportInvoice = async (body) =>
+  await postRequest(`${INVOICE_PATH}/export`, body);
