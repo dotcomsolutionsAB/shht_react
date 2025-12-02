@@ -19,6 +19,7 @@ const Page404 = lazy(() => import("../pages/Page404"));
 const Users = lazy(() => import("../sections/admin/users/users"));
 const Clients = lazy(() => import("../sections/admin/clients/clients"));
 const Invoices = lazy(() => import("../sections/admin/invoices/invoices"));
+const Order = lazy(() => import("../sections/admin/order/order"));
 
 //==============================================================
 
@@ -52,7 +53,7 @@ export default function Router() {
     { index: true, element: <AdminDashboard /> },
     ...withAccess(accessTo, "orders", {
       path: "orders",
-      element: <Users />,
+      element: <Order />,
     }),
     ...withAccess(accessTo, "invoices", {
       path: "invoices",
@@ -110,7 +111,7 @@ export default function Router() {
             src={SHHT_Logo}
             sx={{
               width: { xs: "80vw" },
-              maxWidth: "250px",
+              maxWidth: "300px",
               objectFit: "cover",
             }}
           ></Box>

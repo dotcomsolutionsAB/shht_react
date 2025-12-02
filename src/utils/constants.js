@@ -53,6 +53,17 @@ export const ADMIN_SIDEBAR_ITEMS = [
 
 export const ROLE_LIST = ["admin", "sales", "staff", "dispatch"];
 
+export const ORDER_STATUS_LIST = [
+  "out_of_stock",
+  "cancelled",
+  "short_closed",
+  "completed",
+  "invoiced",
+  "partial_pending",
+  "dispatched",
+  "pending",
+];
+
 export const STATES_LIST = [
   "Andhra Pradesh",
   "Arunachal Pradesh",

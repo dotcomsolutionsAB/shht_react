@@ -36,6 +36,8 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
     role: "",
     order_views: "self",
     change_status: "0",
+    whatsapp_status: "0",
+    email_status: "0",
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -89,6 +91,8 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
         email: detail?.email || "",
         order_views: detail?.order_views || "",
         change_status: detail?.change_status || "",
+        email_status: detail?.email_status || "",
+        whatsapp_status: detail?.whatsapp_status || "",
       });
     } else {
       setFormData(initialState);
@@ -99,10 +103,12 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
     <Dialog
       open={open}
       onClose={!isLoading ? onClose : null}
-      PaperProps={{
-        sx: {
-          minWidth: { xs: "95vw", sm: "550px", md: "800px", lg: "1100px" },
-          position: "relative",
+      slotProps={{
+        paper: {
+          sx: {
+            minWidth: { xs: "95vw", sm: "550px", md: "800px", lg: "1100px" },
+            position: "relative",
+          },
         },
       }}
     >
@@ -264,6 +270,46 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
                 onChange={(_, newValue) =>
                   handleChange({
                     target: { name: "change_status", value: newValue },
+                  })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Autocomplete
+                options={["1", "0"]}
+                getOptionLabel={(option) => (option === "1" ? "Yes" : "No")}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Whatsapp Status"
+                    name="whatsapp_status"
+                    required
+                  />
+                )}
+                value={formData?.whatsapp_status || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "whatsapp_status", value: newValue },
+                  })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Autocomplete
+                options={["1", "0"]}
+                getOptionLabel={(option) => (option === "1" ? "Yes" : "No")}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Email Status"
+                    name="email_status"
+                    required
+                  />
+                )}
+                value={formData?.email_status || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "email_status", value: newValue },
                   })
                 }
               />

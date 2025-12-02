@@ -118,7 +118,7 @@ const InvoicesTableRow = ({
         </MenuItem>
       </Menu>
 
-      {/* Delete User*/}
+      {/* Delete Invoice Confirmation Dialog */}
       <ConfirmationDialog
         open={confirmationModalOpen}
         onCancel={handleConfirmationModalClose}

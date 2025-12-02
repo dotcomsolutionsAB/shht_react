@@ -135,8 +135,8 @@ const Login = () => {
             component="img"
             src={SHHT_Logo}
             sx={{
-              height: { xs: "150px", sm: "170px", md: "250px" },
-              width: { xs: "150px", sm: "170px", md: "250px" },
+              height: { xs: "150px", sm: "300px", md: "400px" },
+              width: { xs: "300px", sm: "300px", md: "400px" },
               objectFit: "contain",
             }}
           ></Box>

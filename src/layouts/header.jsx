@@ -134,8 +134,7 @@ const Header = () => {
                   src={SHHT_Logo}
                   alt="SHHT Logo"
                   sx={{
-                    width: "70px",
-                    height: "80%",
+                    height: "100%",
                     objectFit: "contain",
                   }}
                   loading="lazy"

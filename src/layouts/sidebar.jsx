@@ -76,7 +76,7 @@ const Sidebar = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", height: "100%" }}>
+    <Box sx={{ width: "100%", height: "100%", px: 1 }}>
       {layout?.isLessThanMedium && (
         <Box
           sx={{
@@ -95,6 +95,7 @@ const Sidebar = () => {
               height: "100%",
               display: "flex",
               alignItems: "center",
+              flex: 1,
             }}
           >
             {!isImageError ? (
@@ -103,8 +104,7 @@ const Sidebar = () => {
                 src={SHHT_Logo}
                 alt="SHHT Logo"
                 sx={{
-                  width: "70px",
-                  height: "80%",
+                  height: "100%",
                   objectFit: "contain",
                 }}
                 loading="lazy"
@@ -151,6 +151,8 @@ const Sidebar = () => {
               "&:hover": {
                 bgcolor: "#ccd3e0ff",
               },
+              borderRadius: "8px",
+              mb: 0.5,
             }}
           >
             {/* Icon Container */}

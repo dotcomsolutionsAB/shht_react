@@ -18,3 +18,6 @@ export const updateOrder = async (body) =>
 
 export const deleteOrder = async (body) =>
   await deleteRequest(`${ORDERS_PATH}/delete/${body?.id}`);
+
+export const exportOrder = async (body) =>
+  await postRequest(`${ORDERS_PATH}/export`, body);
