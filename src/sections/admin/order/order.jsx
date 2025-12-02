@@ -224,9 +224,9 @@ export default function Order() {
             <TextField
               value={search || ""}
               onChange={handleSearch}
-              placeholder="Search"
+              placeholder="Search by SO No, Order No"
               size="small"
-              sx={{ width: "200px" }}
+              sx={{ width: "250px" }}
             />
 
             <Autocomplete
