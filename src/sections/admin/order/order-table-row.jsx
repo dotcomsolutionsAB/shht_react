@@ -141,11 +141,11 @@ const OrderTableRow = ({
           {row?.status || "-"}
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.invoice?.name || "-"}
+          {row?.invoice?.invoice_number || "-"}
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.invoice?.date
-            ? dayjs(row?.invoice?.date).format("DD-MM-YYYY")
+          {row?.invoice?.invoice_date
+            ? dayjs(row?.invoice?.invoice_date).format("DD-MM-YYYY")
             : "-"}
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
