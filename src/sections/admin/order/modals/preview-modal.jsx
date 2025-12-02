@@ -35,7 +35,6 @@ const PreviewModal = ({ open, onClose, detail }) => {
               container
               sx={{
                 borderTop: "1px solid",
-                borderBottom: "1px solid",
                 borderColor: "grey.300",
               }}
             >
@@ -84,7 +83,6 @@ const PreviewModal = ({ open, onClose, detail }) => {
               container
               sx={{
                 borderTop: "1px solid",
-                borderBottom: "1px solid",
                 borderColor: "grey.300",
               }}
             >
@@ -139,7 +137,6 @@ const PreviewModal = ({ open, onClose, detail }) => {
               container
               sx={{
                 borderTop: "1px solid",
-                borderBottom: "1px solid",
                 borderColor: "grey.300",
               }}
             >
@@ -190,7 +187,6 @@ const PreviewModal = ({ open, onClose, detail }) => {
               container
               sx={{
                 borderTop: "1px solid",
-                borderBottom: "1px solid",
                 borderColor: "grey.300",
               }}
             >
@@ -243,7 +239,6 @@ const PreviewModal = ({ open, onClose, detail }) => {
               container
               sx={{
                 borderTop: "1px solid",
-                borderBottom: "1px solid",
                 borderColor: "grey.300",
               }}
             >
@@ -292,7 +287,6 @@ const PreviewModal = ({ open, onClose, detail }) => {
               container
               sx={{
                 borderTop: "1px solid",
-                borderBottom: "1px solid",
                 borderColor: "grey.300",
               }}
             >
@@ -363,7 +357,6 @@ const PreviewModal = ({ open, onClose, detail }) => {
               container
               sx={{
                 borderTop: "1px solid",
-                borderBottom: "1px solid",
                 borderColor: "grey.300",
               }}
             >
