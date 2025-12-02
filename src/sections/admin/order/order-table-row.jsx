@@ -12,8 +12,6 @@ import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import ConfirmationDialog from "../../../components/confirmation-dialog/confirmation-dialog";
 import PreviewModal from "./modals/preview-modal";
-import { getContactPersons } from "../../../services/admin/clients.service";
-import { useGetApi } from "../../../hooks/useGetApi";
 import AddNewOrderModal from "./modals/add-new-order-modal";
 import { deleteOrder } from "../../../services/admin/orders.service";
 import dayjs from "dayjs";
@@ -31,29 +29,7 @@ const OrderTableRow = ({
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-  const [changeViewContactsModalOpen, setChangeViewContactsModal] =
-    useState(false);
-
-  const [selectedClientId, setSelectedClientId] = useState(null);
-
-  // api to get contact person list
-  const {
-    dataList: contactPersonList,
-    dataCount: contactPersonsCount,
-    isLoading: isContactPersonsLoading,
-    isError: isContactPersonsError,
-    refetch: refetchContactPersons,
-    errorMessage: errorContactPersonsMessage,
-  } = useGetApi({
-    apiFunction: getContactPersons,
-    body: {
-      offset: 0,
-      limit: 100,
-      client: selectedClientId || "",
-    },
-    skip: !selectedClientId,
-    dependencies: [selectedClientId],
-  });
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
 
   // open action menu open
   const handleMenuOpen = (event) => {
@@ -73,15 +49,13 @@ const OrderTableRow = ({
     setEditModalOpen(false);
   }, []);
 
-  const handleChangeViewContactsModalOpen = () => {
-    setChangeViewContactsModal(true);
-    setSelectedClientId(row?.id);
+  const handlePreviewModalOpen = () => {
+    setPreviewModalOpen(true);
     handleMenuClose();
   };
 
-  const handleChangeViewContactsModalClose = useCallback(() => {
-    setChangeViewContactsModal(false);
-    setSelectedClientId(null);
+  const handlePreviewModalClose = useCallback(() => {
+    setPreviewModalOpen(false);
   }, []);
 
   const handleConfirmationModalOpen = () => {
@@ -191,7 +165,7 @@ const OrderTableRow = ({
           <Edit fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Edit
         </MenuItem>
-        <MenuItem onClick={handleChangeViewContactsModalOpen}>
+        <MenuItem onClick={handlePreviewModalOpen}>
           <Visibility fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Preview
         </MenuItem>
@@ -215,15 +189,9 @@ const OrderTableRow = ({
 
       {/* View Orders*/}
       <PreviewModal
-        open={changeViewContactsModalOpen}
-        onClose={handleChangeViewContactsModalClose}
-        client_id={row?.id}
-        contactPersonList={contactPersonList}
-        contactPersonsCount={contactPersonsCount}
-        isContactPersonsLoading={isContactPersonsLoading}
-        isContactPersonsError={isContactPersonsError}
-        refetchContactPersons={refetchContactPersons}
-        errorContactPersonsMessage={errorContactPersonsMessage}
+        open={previewModalOpen}
+        onClose={handlePreviewModalClose}
+        detail={row}
       />
 
       {/* Edit Order*/}
