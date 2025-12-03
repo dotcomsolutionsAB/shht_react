@@ -123,11 +123,6 @@ export default function Order() {
     body: { role: "staff" },
   });
 
-  // api to get dispatched by list
-  const { dataList: dispatchedByList } = useGetApi({
-    apiFunction: getUsers,
-    body: { role: "staff" },
-  });
   // api to get initiated by list
   const { dataList: initiatedByList } = useGetApi({
     apiFunction: getUsers,
@@ -272,7 +267,7 @@ export default function Order() {
               sx={{ minWidth: "200px" }}
             />
             <Autocomplete
-              options={dispatchedByList || []}
+              options={checkedByList || []}
               getOptionLabel={(option) => option?.name || ""}
               renderInput={(params) => (
                 <TextField {...params} label="Dispatched By" size="small" />
@@ -344,7 +339,6 @@ export default function Order() {
             refetch={refetch}
             clientList={clientList}
             checkedByList={checkedByList}
-            dispatchedByList={dispatchedByList}
             initiatedByList={initiatedByList}
           />
         </Box>
@@ -389,7 +383,6 @@ export default function Order() {
                     row={row}
                     clientList={clientList}
                     checkedByList={checkedByList}
-                    dispatchedByList={dispatchedByList}
                     initiatedByList={initiatedByList}
                   />
                 ))}

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import {
   Autocomplete,
   Box,
@@ -8,11 +8,12 @@ import {
   Dialog,
   DialogContent,
   Grid,
+  IconButton,
   TextField,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import useAuth from "../../../../hooks/useAuth";
-import { CancelOutlined } from "@mui/icons-material";
+import { Add, CancelOutlined } from "@mui/icons-material";
 import {
   createOrder,
   getSoNo,
@@ -23,6 +24,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import { getContactPersons } from "../../../../services/admin/clients.service";
 import { ORDER_STATUS_LIST } from "../../../../utils/constants";
+import ViewContactsModal from "../../clients/modals/view-contacts-modal";
 
 const getInitialState = () => ({
   client: null,
@@ -40,14 +42,13 @@ const getInitialState = () => ({
   initiated_by: null,
 });
 
-const AddNewClientModal = ({
+const AddNewOrderModal = ({
   open,
   onClose,
   refetch,
   detail,
   clientList,
   checkedByList,
-  dispatchedByList,
   initiatedByList,
 }) => {
   const { logout } = useAuth();
@@ -57,10 +58,13 @@ const AddNewClientModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState(initialState);
   const [selectedClientId, setSelectedClientId] = useState(null);
+  const [changeViewContactsModalOpen, setChangeViewContactsModal] =
+    useState(false);
 
   // api to get contact person list
   const {
     dataList: contactPersonList,
+    dataCount: contactPersonsCount,
     isLoading: isContactPersonsLoading,
     isError: isContactPersonsError,
     refetch: refetchContactPersons,
@@ -91,6 +95,14 @@ const AddNewClientModal = ({
     skip: !open || !formData?.company,
     dependencies: [open, formData?.company],
   });
+
+  const handleAddViewContactModalOpen = () => {
+    setChangeViewContactsModal(true);
+  };
+
+  const handleAddViewContactModalClose = useCallback(() => {
+    setChangeViewContactsModal(false);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -231,29 +243,59 @@ const AddNewClientModal = ({
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3}>
-              <Autocomplete
-                options={contactPersonList || []}
-                getOptionLabel={(option) => option.name || ""}
-                value={formData?.client_contact_person || null}
-                onChange={(_, newValue) =>
-                  handleChange({
-                    target: { name: "client_contact_person", value: newValue },
-                  })
-                }
-                loading={isContactPersonsLoading}
-                disabled={!selectedClientId}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select Contact"
-                    name="client_contact_person"
-                    required
-                    disabled={!selectedClientId}
-                    error={isContactPersonsError}
-                    helperText={errorContactPersonsMessage || ""}
-                  />
-                )}
-              />
+              <Box
+                sx={{ display: "flex", alignItems: "center", height: "100%" }}
+              >
+                <Autocomplete
+                  options={contactPersonList || []}
+                  getOptionLabel={(option) => option.name || ""}
+                  value={formData?.client_contact_person || null}
+                  onChange={(_, newValue) =>
+                    handleChange({
+                      target: {
+                        name: "client_contact_person",
+                        value: newValue,
+                      },
+                    })
+                  }
+                  loading={isContactPersonsLoading}
+                  disabled={!selectedClientId}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Contact"
+                      name="client_contact_person"
+                      required
+                      disabled={!selectedClientId}
+                      error={isContactPersonsError}
+                      helperText={errorContactPersonsMessage || ""}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        },
+                      }}
+                    />
+                  )}
+                  sx={{
+                    flex: 1,
+                  }}
+                />
+                <Button
+                  variant="contained"
+                  sx={{
+                    minWidth: 0,
+                    px: 0.2,
+                    height: "100%",
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                  }}
+                  disabled={!selectedClientId}
+                  onClick={handleAddViewContactModalOpen}
+                >
+                  <Add />
+                </Button>
+              </Box>
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
@@ -386,7 +428,7 @@ const AddNewClientModal = ({
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <Autocomplete
-                options={dispatchedByList || []}
+                options={checkedByList || []}
                 getOptionLabel={(option) => option?.name || ""}
                 renderInput={(params) => (
                   <TextField {...params} label="Dispatched By" />
@@ -439,12 +481,25 @@ const AddNewClientModal = ({
             </Button>
           </Box>
         </Box>
+        {/* View Contacts*/}
+        <ViewContactsModal
+          open={changeViewContactsModalOpen}
+          onClose={handleAddViewContactModalClose}
+          client_id={selectedClientId}
+          rmList={checkedByList}
+          contactPersonList={contactPersonList}
+          contactPersonsCount={contactPersonsCount}
+          isContactPersonsLoading={isContactPersonsLoading}
+          isContactPersonsError={isContactPersonsError}
+          refetchContactPersons={refetchContactPersons}
+          errorContactPersonsMessage={errorContactPersonsMessage}
+        />
       </DialogContent>
     </Dialog>
   );
 };
 
-AddNewClientModal.propTypes = {
+AddNewOrderModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
   refetch: PropTypes.func,
@@ -455,4 +510,4 @@ AddNewClientModal.propTypes = {
   initiatedByList: PropTypes.array,
 };
 
-export default memo(AddNewClientModal);
+export default memo(AddNewOrderModal);

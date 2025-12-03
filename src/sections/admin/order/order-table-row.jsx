@@ -25,7 +25,6 @@ const OrderTableRow = ({
   setPage,
   clientList,
   checkedByList,
-  dispatchedByList,
   initiatedByList,
 }) => {
   const { logout } = useAuth();
@@ -206,7 +205,6 @@ const OrderTableRow = ({
         detail={row}
         clientList={clientList}
         checkedByList={checkedByList}
-        dispatchedByList={dispatchedByList}
         initiatedByList={initiatedByList}
       />
     </>
@@ -222,7 +220,6 @@ OrderTableRow.propTypes = {
   setPage: PropTypes.func,
   clientList: PropTypes.array,
   checkedByList: PropTypes.array,
-  dispatchedByList: PropTypes.array,
   initiatedByList: PropTypes.array,
 };
 
