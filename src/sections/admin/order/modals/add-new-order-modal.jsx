@@ -15,40 +15,100 @@ import useAuth from "../../../../hooks/useAuth";
 import { CancelOutlined } from "@mui/icons-material";
 import {
   createOrder,
+  getSoNo,
   updateOrder,
 } from "../../../../services/admin/orders.service";
 import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
+import { useGetApi } from "../../../../hooks/useGetApi";
+import { getContactPersons } from "../../../../services/admin/clients.service";
+import { ORDER_STATUS_LIST } from "../../../../utils/constants";
 
 const getInitialState = () => ({
-  company: "",
   client: null,
   client_contact_person: null,
-  email: "",
   mobile: "",
-  so_date: null,
+  email: "",
+  company: "SHHT",
+  so_no: "",
+  so_date: dayjs(),
+  checked_by: null,
   order_no: "",
   order_date: null,
-  invoice: null,
-  status: "",
-  initiated_by: null,
-  checked_by: null,
+  status: "pending",
   dispatched_by: null,
-  drive_link: "",
+  initiated_by: null,
 });
 
-const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
+const AddNewClientModal = ({
+  open,
+  onClose,
+  refetch,
+  detail,
+  clientList,
+  checkedByList,
+  dispatchedByList,
+  initiatedByList,
+}) => {
   const { logout } = useAuth();
 
   const initialState = getInitialState();
 
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState(initialState);
+  const [selectedClientId, setSelectedClientId] = useState(null);
+
+  // api to get contact person list
+  const {
+    dataList: contactPersonList,
+    isLoading: isContactPersonsLoading,
+    isError: isContactPersonsError,
+    refetch: refetchContactPersons,
+    errorMessage: errorContactPersonsMessage,
+  } = useGetApi({
+    apiFunction: getContactPersons,
+    body: {
+      offset: 0,
+      limit: 100,
+      client: selectedClientId || "",
+    },
+    skip: !selectedClientId,
+    dependencies: [selectedClientId],
+  });
+
+  // api to get so no
+  const {
+    dataList: soNo,
+    isLoading: isSoNoLoading,
+    isError: isSoNoError,
+    refetch: refetchSoNo,
+    errorMessage: errorSoNoMessage,
+  } = useGetApi({
+    apiFunction: getSoNo,
+    body: {
+      company: formData?.company || "",
+    },
+    skip: !open || !formData?.company,
+    dependencies: [open, formData?.company],
+  });
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     const parsedValue =
       type === "date" && value ? dayjs(value).format("YYYY-MM-DD") : value;
+    if (name === "client") {
+      setSelectedClientId(value?.id);
+      setFormData((preValue) => ({
+        ...preValue,
+        client_contact_person: null,
+      }));
+    }
+    if (name === "company" && !value) {
+      setFormData((preValue) => ({
+        ...preValue,
+        so_no: null,
+      }));
+    }
     setFormData((preValue) => ({ ...preValue, [name]: parsedValue }));
   };
 
@@ -57,10 +117,25 @@ const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
     let response;
     setIsLoading(true);
 
+    const payload = {
+      ...formData,
+      client: formData?.client?.id || "",
+      client_contact_person: formData?.client_contact_person?.id || "",
+      checked_by: formData?.checked_by?.id || "",
+      dispatched_by: formData?.dispatched_by?.id || "",
+      initiated_by: formData?.initiated_by?.id || "",
+      order_date: formData?.order_date
+        ? dayjs(formData?.order_date).format("YYYY-MM-DD")
+        : null,
+      so_date: formData?.so_date
+        ? dayjs(formData?.so_date).format("YYYY-MM-DD")
+        : null,
+    };
+
     if (detail?.id) {
-      response = await updateOrder(formData);
+      response = await updateOrder(payload);
     } else {
-      response = await createOrder(formData);
+      response = await createOrder(payload);
     }
     setIsLoading(false);
 
@@ -79,23 +154,26 @@ const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
   };
 
   useEffect(() => {
+    setFormData((preValue) => ({ ...preValue, so_no: soNo?.so_no || "" }));
+  }, [soNo]);
+
+  useEffect(() => {
     if (detail?.id) {
       setFormData({
         id: detail?.id,
-        company: detail?.company || "",
         client: detail?.client || null,
         client_contact_person: detail?.client_contact_person || null,
-        email: detail?.email || "",
         mobile: detail?.mobile || "",
-        so_date: detail?.so_date ? dayjs(detail?.so_date) : null,
+        email: detail?.email || "",
+        company: detail?.company || "SHHT",
+        so_no: detail?.so_no || "",
+        so_date: detail?.so_date ? dayjs(detail?.so_date) : dayjs(),
+        checked_by: detail?.checked_by || null,
         order_no: detail?.order_no || "",
         order_date: detail?.order_date ? dayjs(detail?.order_date) : null,
-        invoice: detail?.invoice || null,
         status: detail?.status || "",
-        initiated_by: detail?.initiated_by || null,
-        checked_by: detail?.checked_by || null,
         dispatched_by: detail?.dispatched_by || null,
-        drive_link: detail?.drive_link || "",
+        initiated_by: detail?.initiated_by || null,
       });
     } else {
       setFormData(getInitialState());
@@ -139,7 +217,7 @@ const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Client"
+                    label="Select Client"
                     name="client"
                     required
                   />
@@ -150,6 +228,31 @@ const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
                     target: { name: "client", value: newValue },
                   })
                 }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={contactPersonList || []}
+                getOptionLabel={(option) => option.name || ""}
+                value={formData?.client_contact_person || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "client_contact_person", value: newValue },
+                  })
+                }
+                loading={isContactPersonsLoading}
+                disabled={!selectedClientId}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Contact"
+                    name="client_contact_person"
+                    required
+                    disabled={!selectedClientId}
+                    error={isContactPersonsError}
+                    helperText={errorContactPersonsMessage || ""}
+                  />
+                )}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -196,25 +299,44 @@ const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
-                label="SO Number - Auto"
-                name="so_number"
+                label="SO Number"
+                name="so_no"
                 fullWidth
                 required
-                value={formData?.so_number || ""}
-                onChange={handleChange}
+                value={isSoNoLoading ? "Loading..." : formData?.so_no || ""}
+                error={isSoNoError}
+                helperText={errorSoNoMessage || ""}
+                disabled
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <DatePicker
-                label="SO Date - Auto"
+                label="SO Date"
                 slotProps={{
                   textField: { required: true, fullWidth: true },
                 }}
                 disableFuture
                 value={formData?.so_date ? dayjs(formData?.so_date) : null}
-                onChange={(newDate) =>
+                disabled
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={checkedByList || []}
+                getOptionLabel={(option) => option?.name || ""}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Checked By"
+                    required
+                    fullWidth
+                  />
+                )}
+                value={formData?.checked_by || null}
+                onChange={(_, newValue) =>
                   handleChange({
-                    target: { name: "so_date", value: newDate, type: "date" },
+                    target: { name: "checked_by", value: newValue },
                   })
                 }
               />
@@ -222,10 +344,10 @@ const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
             <Grid item xs={12} sm={6} md={4} lg={3}>
               <TextField
                 label="Order Number"
-                name="order_number"
+                name="order_no"
                 fullWidth
                 required
-                value={formData?.order_number || ""}
+                value={formData?.order_no || ""}
                 onChange={handleChange}
               />
             </Grid>
@@ -246,6 +368,48 @@ const AddNewClientModal = ({ open, onClose, refetch, detail, clientList }) => {
                       value: newDate,
                       type: "date",
                     },
+                  })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={ORDER_STATUS_LIST || []}
+                renderInput={(params) => (
+                  <TextField {...params} label="Status" />
+                )}
+                value={formData?.status || null}
+                onChange={(_, newValue) =>
+                  handleChange({ target: { name: "status", value: newValue } })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={dispatchedByList || []}
+                getOptionLabel={(option) => option?.name || ""}
+                renderInput={(params) => (
+                  <TextField {...params} label="Dispatched By" />
+                )}
+                value={formData?.dispatched_by || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "dispatched_by", value: newValue },
+                  })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Autocomplete
+                options={initiatedByList || []}
+                getOptionLabel={(option) => option?.name || ""}
+                renderInput={(params) => (
+                  <TextField {...params} label="Initiated By" />
+                )}
+                value={formData?.initiated_by || null}
+                onChange={(_, newValue) =>
+                  handleChange({
+                    target: { name: "initiated_by", value: newValue },
                   })
                 }
               />
@@ -286,6 +450,9 @@ AddNewClientModal.propTypes = {
   refetch: PropTypes.func,
   detail: PropTypes.object,
   clientList: PropTypes.array,
+  checkedByList: PropTypes.array,
+  dispatchedByList: PropTypes.array,
+  initiatedByList: PropTypes.array,
 };
 
 export default memo(AddNewClientModal);

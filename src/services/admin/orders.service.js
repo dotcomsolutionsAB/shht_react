@@ -10,6 +10,9 @@ export const getOrders = async (body) =>
 export const getOrderById = async (id) =>
   await getRequest(`${ORDERS_PATH}/retrieve/${id}`);
 
+export const getSoNo = async (body) =>
+  await postRequest(`${ORDERS_PATH}/get_order_id`, body);
+
 export const createOrder = async (body) =>
   await postRequest(`${ORDERS_PATH}/create`, body);
 

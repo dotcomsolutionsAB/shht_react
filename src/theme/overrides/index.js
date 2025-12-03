@@ -13,6 +13,7 @@ import CssBaseline from "./CssBaseline";
 import ControlLabel from "./ControlLabel";
 import TextField from "./TextField";
 import DatePicker from "./DatePicker";
+import Autocomplete from "./Autocomplete";
 
 export default function ComponentsOverrides(theme) {
   return Object.assign(
@@ -30,6 +31,7 @@ export default function ComponentsOverrides(theme) {
     Table(theme),
     Tabs(theme),
     TextField(theme),
-    Typography(theme)
+    Typography(theme),
+    Autocomplete(theme)
   );
 }

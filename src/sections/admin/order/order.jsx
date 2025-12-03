@@ -128,6 +128,11 @@ export default function Order() {
     apiFunction: getUsers,
     body: { role: "staff" },
   });
+  // api to get initiated by list
+  const { dataList: initiatedByList } = useGetApi({
+    apiFunction: getUsers,
+    body: { role: "sales" },
+  });
 
   const handleModalOpen = () => {
     setModalOpen(true);
@@ -338,6 +343,9 @@ export default function Order() {
             onClose={handleModalClose}
             refetch={refetch}
             clientList={clientList}
+            checkedByList={checkedByList}
+            dispatchedByList={dispatchedByList}
+            initiatedByList={initiatedByList}
           />
         </Box>
 
@@ -379,6 +387,10 @@ export default function Order() {
                     dataCount={ordersCount}
                     setPage={setPage}
                     row={row}
+                    clientList={clientList}
+                    checkedByList={checkedByList}
+                    dispatchedByList={dispatchedByList}
+                    initiatedByList={initiatedByList}
                   />
                 ))}
 

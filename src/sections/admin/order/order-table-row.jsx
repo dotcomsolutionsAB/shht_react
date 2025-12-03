@@ -23,6 +23,10 @@ const OrderTableRow = ({
   rowsPerPage,
   dataCount,
   setPage,
+  clientList,
+  checkedByList,
+  dispatchedByList,
+  initiatedByList,
 }) => {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -200,6 +204,10 @@ const OrderTableRow = ({
         onClose={handleEditModalClose}
         refetch={refetch}
         detail={row}
+        clientList={clientList}
+        checkedByList={checkedByList}
+        dispatchedByList={dispatchedByList}
+        initiatedByList={initiatedByList}
       />
     </>
   );
@@ -212,6 +220,10 @@ OrderTableRow.propTypes = {
   rowsPerPage: PropTypes.number,
   dataCount: PropTypes.number,
   setPage: PropTypes.func,
+  clientList: PropTypes.array,
+  checkedByList: PropTypes.array,
+  dispatchedByList: PropTypes.array,
+  initiatedByList: PropTypes.array,
 };
 
 export default memo(OrderTableRow);
