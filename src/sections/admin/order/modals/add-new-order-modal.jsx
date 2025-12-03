@@ -190,6 +190,7 @@ const AddNewOrderModal = ({
       setSelectedClientId(detail?.client?.id);
     } else {
       setFormData(getInitialState());
+      setSelectedClientId(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
