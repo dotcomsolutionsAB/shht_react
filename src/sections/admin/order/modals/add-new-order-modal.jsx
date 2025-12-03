@@ -187,6 +187,7 @@ const AddNewOrderModal = ({
         dispatched_by: detail?.dispatched_by || null,
         initiated_by: detail?.initiated_by || null,
       });
+      setSelectedClientId(detail?.client?.id);
     } else {
       setFormData(getInitialState());
     }
