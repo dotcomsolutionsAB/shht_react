@@ -114,6 +114,13 @@ const AddNewOrderModal = ({
         client_contact_person: null,
       }));
     }
+    if (name === "client_contact_person") {
+      setFormData((preValue) => ({
+        ...preValue,
+        mobile: value?.mobile,
+        email: value?.email,
+      }));
+    }
     if (name === "company" && !value) {
       setFormData((preValue) => ({
         ...preValue,
