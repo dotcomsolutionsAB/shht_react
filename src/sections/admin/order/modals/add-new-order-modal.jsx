@@ -8,7 +8,6 @@ import {
   Dialog,
   DialogContent,
   Grid,
-  IconButton,
   TextField,
 } from "@mui/material";
 import { toast } from "react-toastify";
@@ -37,9 +36,9 @@ const getInitialState = () => ({
   checked_by: null,
   order_no: "",
   order_date: null,
-  status: "pending",
-  dispatched_by: null,
-  initiated_by: null,
+  // status: "pending",
+  // dispatched_by: null,
+  // initiated_by: null,
 });
 
 const AddNewOrderModal = ({
@@ -92,7 +91,7 @@ const AddNewOrderModal = ({
     body: {
       company: formData?.company || "",
     },
-    skip: !open || !formData?.company,
+    skip: !open || detail?.id || !formData?.company,
     dependencies: [open, formData?.company],
   });
 
@@ -134,8 +133,8 @@ const AddNewOrderModal = ({
       client: formData?.client?.id || "",
       client_contact_person: formData?.client_contact_person?.id || "",
       checked_by: formData?.checked_by?.id || "",
-      dispatched_by: formData?.dispatched_by?.id || "",
-      initiated_by: formData?.initiated_by?.id || "",
+      // dispatched_by: formData?.dispatched_by?.id || "",
+      // initiated_by: formData?.initiated_by?.id || "",
       order_date: formData?.order_date
         ? dayjs(formData?.order_date).format("YYYY-MM-DD")
         : null,
@@ -166,7 +165,8 @@ const AddNewOrderModal = ({
   };
 
   useEffect(() => {
-    setFormData((preValue) => ({ ...preValue, so_no: soNo?.so_no || "" }));
+    if (!detail?.id)
+      setFormData((preValue) => ({ ...preValue, so_no: soNo?.so_no || "" }));
   }, [soNo]);
 
   useEffect(() => {
@@ -183,9 +183,9 @@ const AddNewOrderModal = ({
         checked_by: detail?.checked_by || null,
         order_no: detail?.order_no || "",
         order_date: detail?.order_date ? dayjs(detail?.order_date) : null,
-        status: detail?.status || "",
-        dispatched_by: detail?.dispatched_by || null,
-        initiated_by: detail?.initiated_by || null,
+        // status: detail?.status || "",
+        // dispatched_by: detail?.dispatched_by || null,
+        // initiated_by: detail?.initiated_by || null,
       });
       setSelectedClientId(detail?.client?.id);
     } else {
@@ -339,6 +339,7 @@ const AddNewOrderModal = ({
                     target: { name: "company", value: newValue },
                   })
                 }
+                disabled={detail?.id}
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -416,7 +417,7 @@ const AddNewOrderModal = ({
                 }
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            {/* <Grid item xs={12} sm={6} md={4} lg={3}>
               <Autocomplete
                 options={ORDER_STATUS_LIST || []}
                 renderInput={(params) => (
@@ -427,8 +428,8 @@ const AddNewOrderModal = ({
                   handleChange({ target: { name: "status", value: newValue } })
                 }
               />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            </Grid> */}
+            {/* <Grid item xs={12} sm={6} md={4} lg={3}>
               <Autocomplete
                 options={checkedByList || []}
                 getOptionLabel={(option) => option?.name || ""}
@@ -442,8 +443,8 @@ const AddNewOrderModal = ({
                   })
                 }
               />
-            </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+            </Grid> */}
+            {/* <Grid item xs={12} sm={6} md={4} lg={3}>
               <Autocomplete
                 options={initiatedByList || []}
                 getOptionLabel={(option) => option?.name || ""}
@@ -457,7 +458,7 @@ const AddNewOrderModal = ({
                   })
                 }
               />
-            </Grid>
+            </Grid> */}
           </Grid>
           <Box
             sx={{
