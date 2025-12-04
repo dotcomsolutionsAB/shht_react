@@ -462,7 +462,6 @@ const AddNewClientModal = ({
                           label="Email"
                           name="email"
                           fullWidth
-                          required
                           value={item?.email || ""}
                           onChange={(e) =>
                             handleChange(e, "contact_person", index)

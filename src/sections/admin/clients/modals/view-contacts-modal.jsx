@@ -112,7 +112,7 @@ const ViewContactsModal = ({
   const handleSaveNewContacts = async () => {
     // Validate all contacts
     for (const contact of contacts) {
-      if (!contact.name || !contact.mobile || !contact.email) {
+      if (!contact.name || !contact.mobile) {
         toast.error("Please fill in all required fields for all contacts");
         return;
       }
@@ -258,7 +258,6 @@ const ViewContactsModal = ({
                         size="small"
                         type="email"
                         fullWidth
-                        required
                         label="Email"
                         name="email"
                         value={contact.email}

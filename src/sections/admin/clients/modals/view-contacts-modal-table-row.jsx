@@ -73,7 +73,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
   };
 
   const handleSaveEdit = async () => {
-    if (!formData.name || !formData.mobile || !formData.email) {
+    if (!formData.name || !formData.mobile) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -135,6 +135,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
         <TableRow>
           <TableCell sx={{ padding: "8px" }}>
             <TextField
+              label="Name"
               size="small"
               fullWidth
               required
@@ -145,6 +146,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
           </TableCell>
           <TableCell sx={{ padding: "8px" }}>
             <TextField
+              label="Mobile"
               type="tel"
               size="small"
               fullWidth
@@ -156,10 +158,10 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
           </TableCell>
           <TableCell sx={{ padding: "8px" }}>
             <TextField
+              label="Email"
               type="email"
               size="small"
               fullWidth
-              required
               name="email"
               value={formData.email}
               onChange={handleEditChange}
@@ -172,7 +174,9 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
               getOptionLabel={(option) => option?.name || ""}
               value={formData.rm || null}
               onChange={(_, value) => handleEditChange(null, "rm", value)}
-              renderInput={(params) => <TextField {...params} required />}
+              renderInput={(params) => (
+                <TextField {...params} label="RM" required />
+              )}
             />
           </TableCell>
           <TableCell
