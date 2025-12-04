@@ -31,7 +31,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
     client: client_id,
     name: row?.name || "",
     mobile: row?.mobile || "",
-    email: row?.email || "",
+    email: row?.email || null,
     rm: row?.rm || null,
   };
 
@@ -73,7 +73,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
   };
 
   const handleSaveEdit = async () => {
-    if (!formData.name || !formData.mobile) {
+    if (!formData?.name || !formData?.mobile) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -82,10 +82,10 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
     const response = await updateContactPerson({
       id: row?.id,
       client: client_id,
-      name: formData.name,
-      mobile: formData.mobile,
-      email: formData.email,
-      rm_id: formData.rm?.id,
+      name: formData?.name,
+      mobile: formData?.mobile,
+      email: formData?.email,
+      rm_id: formData?.rm?.id,
     });
     setIsSubmitting(false);
 
@@ -140,7 +140,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
               fullWidth
               required
               name="name"
-              value={formData.name}
+              value={formData?.name || ""}
               onChange={handleEditChange}
             />
           </TableCell>
@@ -152,7 +152,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
               fullWidth
               required
               name="mobile"
-              value={formData.mobile}
+              value={formData?.mobile || ""}
               onChange={handleEditChange}
             />
           </TableCell>
@@ -163,7 +163,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
               size="small"
               fullWidth
               name="email"
-              value={formData.email}
+              value={formData?.email || null}
               onChange={handleEditChange}
             />
           </TableCell>
@@ -172,7 +172,7 @@ const ViewContactsModalTableRow = ({ row, refetch, rmList, client_id }) => {
               size="small"
               options={rmList || []}
               getOptionLabel={(option) => option?.name || ""}
-              value={formData.rm || null}
+              value={formData?.rm || null}
               onChange={(_, value) => handleEditChange(null, "rm", value)}
               renderInput={(params) => (
                 <TextField {...params} label="RM" required />

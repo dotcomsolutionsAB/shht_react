@@ -32,7 +32,7 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
     username: "",
     password: "",
     mobile: "",
-    email: "",
+    email: null,
     role: "",
     order_views: "self",
     change_status: "0",
@@ -88,7 +88,7 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
         name: detail?.name || "",
         username: detail?.username || "",
         mobile: detail?.mobile || "",
-        email: detail?.email || "",
+        email: detail?.email || null,
         order_views: detail?.order_views || "",
         change_status: detail?.change_status || "",
         email_status: detail?.email_status || "",
@@ -195,8 +195,10 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
             )}
             <Grid item xs={12} sm={6} md={4}>
               <TextField
+                type="tel"
                 label="Mobile"
                 name="mobile"
+                required
                 fullWidth
                 value={formData?.mobile || ""}
                 onChange={handleChange}
@@ -208,8 +210,7 @@ const AddNewUserModal = ({ open, onClose, refetch, detail }) => {
                 label="Email"
                 name="email"
                 fullWidth
-                required
-                value={formData?.email || ""}
+                value={formData?.email || null}
                 onChange={handleChange}
               />
             </Grid>

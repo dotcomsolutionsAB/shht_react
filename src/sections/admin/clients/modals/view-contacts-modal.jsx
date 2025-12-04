@@ -56,14 +56,9 @@ const ViewContactsModal = ({
 
   // Check if the last contact is complete
   const isLastContactComplete = () => {
-    if (contacts.length === 0) return false;
-    const lastContact = contacts[contacts.length - 1];
-    return (
-      lastContact.name &&
-      lastContact.mobile &&
-      lastContact.email &&
-      lastContact.rm
-    );
+    if (contacts?.length === 0) return false;
+    const lastContact = contacts?.[contacts?.length - 1];
+    return lastContact?.name && lastContact?.mobile && lastContact?.rm;
   };
 
   const handleAddNewClick = () => {
@@ -71,7 +66,7 @@ const ViewContactsModal = ({
       id: Date.now(),
       name: "",
       mobile: "",
-      email: "",
+      email: null,
       rm: null,
     };
     setContacts([newContact, ...contacts]);
@@ -81,7 +76,7 @@ const ViewContactsModal = ({
   const handleContactChange = (e, contactId, field = null, value = null) => {
     setContacts((prev) =>
       prev.map((contact) => {
-        if (contact.id === contactId) {
+        if (contact?.id === contactId) {
           if (field) {
             // For Autocomplete (rm field)
             return { ...contact, [field]: value };
@@ -112,7 +107,7 @@ const ViewContactsModal = ({
   const handleSaveNewContacts = async () => {
     // Validate all contacts
     for (const contact of contacts) {
-      if (!contact.name || !contact.mobile) {
+      if (!contact?.name || !contact?.mobile) {
         toast.error("Please fill in all required fields for all contacts");
         return;
       }
@@ -123,11 +118,11 @@ const ViewContactsModal = ({
     // Prepare payload with client and contacts array
     const payload = {
       client: client_id,
-      contacts: contacts.map((contact) => ({
-        name: contact.name,
-        mobile: contact.mobile,
-        email: contact.email,
-        rm: contact.rm?.id,
+      contacts: contacts?.map((contact) => ({
+        name: contact?.name,
+        mobile: contact?.mobile,
+        email: contact?.email,
+        rm: contact?.rm?.id,
       })),
     };
 
@@ -229,7 +224,7 @@ const ViewContactsModal = ({
               <TableBody>
                 {/* New Contact Form Rows */}
                 {contacts.map((contact) => (
-                  <TableRow key={contact.id}>
+                  <TableRow key={contact?.id}>
                     <TableCell sx={{ padding: "8px" }}>
                       <TextField
                         size="small"
@@ -237,8 +232,8 @@ const ViewContactsModal = ({
                         required
                         label="Name"
                         name="name"
-                        value={contact.name}
-                        onChange={(e) => handleContactChange(e, contact.id)}
+                        value={contact?.name || ""}
+                        onChange={(e) => handleContactChange(e, contact?.id)}
                       />
                     </TableCell>
                     <TableCell sx={{ padding: "8px" }}>
@@ -249,8 +244,8 @@ const ViewContactsModal = ({
                         required
                         label="Mobile"
                         name="mobile"
-                        value={contact.mobile}
-                        onChange={(e) => handleContactChange(e, contact.id)}
+                        value={contact?.mobile || ""}
+                        onChange={(e) => handleContactChange(e, contact?.id)}
                       />
                     </TableCell>
                     <TableCell sx={{ padding: "8px" }}>
@@ -260,8 +255,8 @@ const ViewContactsModal = ({
                         fullWidth
                         label="Email"
                         name="email"
-                        value={contact.email}
-                        onChange={(e) => handleContactChange(e, contact.id)}
+                        value={contact?.email || null}
+                        onChange={(e) => handleContactChange(e, contact?.id)}
                       />
                     </TableCell>
                     <TableCell sx={{ padding: "8px" }}>
@@ -269,9 +264,9 @@ const ViewContactsModal = ({
                         size="small"
                         options={rmList || []}
                         getOptionLabel={(option) => option?.name || ""}
-                        value={contact.rm || null}
+                        value={contact?.rm || null}
                         onChange={(_, value) =>
-                          handleContactChange(null, contact.id, "rm", value)
+                          handleContactChange(null, contact?.id, "rm", value)
                         }
                         renderInput={(params) => (
                           <TextField {...params} label="RM" required />
@@ -290,7 +285,7 @@ const ViewContactsModal = ({
                       <IconButton
                         size="small"
                         color="error"
-                        onClick={() => handleRemoveContact(contact.id)}
+                        onClick={() => handleRemoveContact(contact?.id)}
                         disabled={isSubmitting}
                       >
                         <Cancel />

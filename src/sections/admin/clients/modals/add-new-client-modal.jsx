@@ -38,7 +38,7 @@ const getInitialState = () => ({
       id: Date.now(),
       name: "",
       mobile: "",
-      email: "",
+      email: null,
       rm: null,
     },
   ],
@@ -83,7 +83,7 @@ const AddNewClientModal = ({
       ...preValue,
       contact_person: [
         ...preValue.contact_person,
-        { id: Date.now(), name: "", mobile: "", email: "", rm: null },
+        { id: Date.now(), name: "", mobile: "", email: null, rm: null },
       ],
     }));
   };
@@ -462,7 +462,7 @@ const AddNewClientModal = ({
                           label="Email"
                           name="email"
                           fullWidth
-                          value={item?.email || ""}
+                          value={item?.email || null}
                           onChange={(e) =>
                             handleChange(e, "contact_person", index)
                           }
