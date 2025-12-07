@@ -4,61 +4,10 @@ import MessageBox from "../components/error/message-box";
 import { Helmet } from "react-helmet-async";
 import { useGetApi } from "../hooks/useGetApi";
 import { getDashboardStats } from "../services/admin/dashboard.service";
-
-const LIST_ITEMS = [
-  {
-    id: 1,
-    label: "Total Orders",
-    total: 400,
-  },
-  {
-    id: 2,
-    label: "Total Clients",
-    total: 270,
-  },
-  {
-    id: 3,
-    label: "Total Users",
-    total: 15,
-  },
-  {
-    id: 4,
-    label: "Total Pending Orders",
-    total: 49,
-  },
-  {
-    id: 5,
-    label: "Total Completed Orders",
-    total: 278,
-  },
-  {
-    id: 6,
-    label: "Total Invoiced",
-    total: 300,
-  },
-  {
-    id: 7,
-    label: "Total Dispatched Orders",
-    total: 339,
-  },
-  {
-    id: 8,
-    label: "Total Partial Pending",
-    total: 56,
-  },
-  {
-    id: 9,
-    label: "Total Short Closed",
-    total: 31,
-  },
-  {
-    id: 10,
-    label: "Total Cancelled",
-    total: 20,
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const cardHeight = "150px";
 
   const {
@@ -70,6 +19,34 @@ const AdminDashboard = () => {
     apiFunction: getDashboardStats,
     // skip: true,
   });
+
+  const handleCardClick = (item) => {
+    switch (item) {
+      case "total_orders":
+        navigate("/orders");
+        break;
+      case "total_clients":
+        navigate("/clients");
+        break;
+      case "total_users":
+        navigate("/users");
+        break;
+      case "total_pending_orders":
+        navigate("/orders", { state: { status: "pending" } });
+        break;
+      case "total_completed_orders":
+        navigate("/orders", { state: { status: "completed" } });
+        break;
+      case "total_short_closed":
+        navigate("/orders", { state: { status: "short_closed" } });
+        break;
+      case "total_cancelled":
+        navigate("/orders", { state: { status: "cancelled" } });
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <>
@@ -103,6 +80,7 @@ const AdminDashboard = () => {
                       p: 2,
                       cursor: "pointer",
                     }}
+                    onClick={() => handleCardClick(item)}
                   >
                     <Typography
                       variant="h6"

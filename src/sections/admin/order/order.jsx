@@ -38,6 +38,7 @@ import { getUsers } from "../../../services/admin/users.service";
 import AddNewOrderModal from "./modals/add-new-order-modal";
 import { exportOrder, getOrders } from "../../../services/admin/orders.service";
 import { getClients } from "../../../services/admin/clients.service";
+import { useLocation } from "react-router-dom";
 
 // ----------------------------------------------------------------------
 
@@ -58,6 +59,7 @@ const HEAD_LABEL = [
 
 export default function Order() {
   const { logout } = useAuth();
+  const { state } = useLocation();
   const [modalOpen, setModalOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -66,7 +68,7 @@ export default function Order() {
 
   const [filter, setFilter] = useState({
     client: null,
-    status: null,
+    status: state?.status || null,
     checked_by: null,
     dispatched_by: null,
     date_from: null,
