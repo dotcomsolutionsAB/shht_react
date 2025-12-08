@@ -75,8 +75,8 @@ const AddNewOrderModal = ({
       limit: 100,
       client: selectedClientId || "",
     },
-    skip: !selectedClientId,
-    dependencies: [selectedClientId],
+    skip: !selectedClientId || !open,
+    dependencies: [selectedClientId, open],
   });
 
   // api to get so no

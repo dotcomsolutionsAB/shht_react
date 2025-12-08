@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import {
+  ChangeCircle,
   Delete,
   Edit,
   Launch,
@@ -12,6 +13,7 @@ import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
 import ConfirmationDialog from "../../../components/confirmation-dialog/confirmation-dialog";
 import PreviewModal from "./modals/preview-modal";
+import ChangeStatusModal from "./modals/change-status-modal";
 import AddNewOrderModal from "./modals/add-new-order-modal";
 import { deleteOrder } from "../../../services/admin/orders.service";
 import dayjs from "dayjs";
@@ -33,6 +35,7 @@ const OrderTableRow = ({
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [changeStatusModalOpen, setChangeStatusModalOpen] = useState(false);
 
   // open action menu open
   const handleMenuOpen = (event) => {
@@ -59,6 +62,15 @@ const OrderTableRow = ({
 
   const handlePreviewModalClose = useCallback(() => {
     setPreviewModalOpen(false);
+  }, []);
+
+  const handleChangeStatusModalOpen = () => {
+    setChangeStatusModalOpen(true);
+    handleMenuClose();
+  };
+
+  const handleChangeStatusModalClose = useCallback(() => {
+    setChangeStatusModalOpen(false);
   }, []);
 
   const handleConfirmationModalOpen = () => {
@@ -172,6 +184,10 @@ const OrderTableRow = ({
           <Visibility fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Preview
         </MenuItem>
+        <MenuItem onClick={handleChangeStatusModalOpen}>
+          <ChangeCircle fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
+          Change Status
+        </MenuItem>
         <MenuItem
           onClick={handleConfirmationModalOpen}
           sx={{ color: "error.main" }}
@@ -190,11 +206,19 @@ const OrderTableRow = ({
         title="Are you sure you want to delete this order?"
       />
 
-      {/* View Orders*/}
+      {/* View Orders Modal*/}
       <PreviewModal
         open={previewModalOpen}
         onClose={handlePreviewModalClose}
         detail={row}
+      />
+
+      {/* Change Status Modal */}
+      <ChangeStatusModal
+        open={changeStatusModalOpen}
+        onClose={handleChangeStatusModalClose}
+        detail={row}
+        refetch={refetch}
       />
 
       {/* Edit Order*/}

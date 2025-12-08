@@ -24,3 +24,9 @@ export const deleteOrder = async (body) =>
 
 export const exportOrder = async (body) =>
   await postRequest(`${ORDERS_PATH}/export`, body);
+
+export const getOrderStatus = async (body) =>
+  await getRequest(`${ORDERS_PATH}/get_order_status/${body.id}`);
+
+export const updateOrderStatus = async (body) =>
+  await postRequest(`${ORDERS_PATH}/changeStatus`, body);
