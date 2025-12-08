@@ -11,6 +11,7 @@ import TableNoData from "../../../components/table/table-no-data";
 import TableEmptyRows from "../../../components/table/table-empty-rows";
 
 import {
+  Autocomplete,
   Box,
   TableCell,
   TableHead,
@@ -22,6 +23,7 @@ import { useGetApi } from "../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
   emptyRows,
+  ROLE_LIST,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../utils/constants";
 import Loader from "../../../components/loader/loader";
@@ -55,6 +57,7 @@ export default function Users() {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [search, setSearch] = useState("");
   const [isExportLoading, setIsExportLoading] = useState(false);
+  const [role, setRole] = useState("");
 
   // api to get users list
   const {
@@ -70,8 +73,9 @@ export default function Users() {
       offset: page * rowsPerPage,
       limit: rowsPerPage,
       search,
+      role,
     },
-    dependencies: [page, rowsPerPage, search],
+    dependencies: [page, rowsPerPage, search, role],
     debounceDelay: 500,
   });
 
@@ -147,15 +151,26 @@ export default function Users() {
             width: "100%",
           }}
         >
-          {/* Search  */}
-          <TextField
-            value={search || ""}
-            onChange={handleSearch}
-            placeholder="Search"
-            size="small"
-            sx={{ maxWidth: "300px" }}
-          />
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {/* Search  */}
+            <TextField
+              value={search || ""}
+              onChange={handleSearch}
+              placeholder="Search"
+              size="small"
+              sx={{ maxWidth: "300px" }}
+            />
 
+            <Autocomplete
+              options={ROLE_LIST || []}
+              renderInput={(params) => (
+                <TextField {...params} label="Role" size="small" />
+              )}
+              value={role || ""}
+              onChange={(_, newValue) => setRole(newValue)}
+              sx={{ minWidth: "200px", textTransform: "capitalize" }}
+            />
+          </Box>
           <Box>
             {/* Add User*/}
             <Button variant="contained" onClick={handleModalOpen}>
