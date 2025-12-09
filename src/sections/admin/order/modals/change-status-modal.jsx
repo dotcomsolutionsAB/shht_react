@@ -58,7 +58,7 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
     if (key === "optional_fields") {
       setFormData((preValue) => ({
         ...preValue,
-        optional_fields: { [name]: parsedValue },
+        optional_fields: { ...preValue?.optional_fields, [name]: parsedValue },
       }));
     } else setFormData((preValue) => ({ ...preValue, [name]: parsedValue }));
   };
@@ -210,6 +210,7 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
                           target: {
                             name: "invoice_date",
                             value: newValue,
+                            type: "date",
                           },
                         },
                         "optional_fields"
