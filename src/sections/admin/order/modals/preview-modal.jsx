@@ -439,14 +439,19 @@ const PreviewModal = ({ open, onClose, detail }) => {
                 sm={6}
                 md={3}
                 sx={{ bgcolor: "grey.200", p: 1, textAlign: "center" }}
-              ></Grid>
+              >
+                <Typography variant="subtitle1">Order Value</Typography>
+              </Grid>
               <Grid
                 item
                 xs={12}
                 sm={6}
                 md={3}
                 sx={{ p: 1, textAlign: "center" }}
-              ></Grid>
+              >
+                {" "}
+                <Typography>{detail?.order_value || "-"}</Typography>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

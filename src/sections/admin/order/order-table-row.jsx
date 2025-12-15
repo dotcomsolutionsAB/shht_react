@@ -130,6 +130,9 @@ const OrderTableRow = ({
           {row?.status || "-"}
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
+          {row?.order_value || "-"}
+        </TableCell>
+        <TableCell sx={{ textTransform: "capitalize" }}>
           {row?.invoice?.invoice_number || "-"}
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>

@@ -36,6 +36,7 @@ const getInitialState = () => ({
   checked_by: null,
   order_no: "",
   order_date: null,
+  order_value: "",
   // status: "pending",
   // dispatched_by: null,
   // initiated_by: null,
@@ -190,6 +191,7 @@ const AddNewOrderModal = ({
         checked_by: detail?.checked_by || null,
         order_no: detail?.order_no || "",
         order_date: detail?.order_date ? dayjs(detail?.order_date) : null,
+        order_value: detail?.order_value || "",
         // status: detail?.status || "",
         // dispatched_by: detail?.dispatched_by || null,
         // initiated_by: detail?.initiated_by || null,
@@ -422,6 +424,17 @@ const AddNewOrderModal = ({
                     },
                   })
                 }
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="Order Value"
+                name="order_value"
+                fullWidth
+                required
+                value={formData?.order_value || ""}
+                onChange={handleChange}
               />
             </Grid>
             {/* <Grid item xs={12} sm={6} md={4} lg={3}>

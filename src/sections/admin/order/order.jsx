@@ -50,6 +50,7 @@ const HEAD_LABEL = [
   { id: "order_date", label: "Order Date" },
   { id: "checked_by", label: "Checked By" },
   { id: "status", label: "Status" },
+  { id: "order_value", label: "Order Value" },
   { id: "invoice_number", label: "Invoice Number" },
   { id: "invoice_date", label: "Invoice Date" },
   { id: "dispatched_by", label: "Dispatched By" },
