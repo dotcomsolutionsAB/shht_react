@@ -75,7 +75,7 @@ const CounterRow = ({ counter, refetch }) => {
     } else {
       toast.error(response?.message || "Some error occurred.");
     }
-  }, []);
+  }, [formData]);
 
   const handleDelete = useCallback(async () => {
     setIsDeleteLoading(true);
