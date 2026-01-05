@@ -73,6 +73,8 @@ export default function Clients() {
     sub_category: [],
     tags: [],
     rm: [],
+    city: "",
+    state: "",
     date_from: null,
     date_to: null,
   });
@@ -83,6 +85,8 @@ export default function Clients() {
     sub_category: filter?.sub_category?.map((item) => item?.id).join(","),
     tags: filter?.tags?.map((item) => item?.id).join(","),
     rm: filter?.rm?.map((item) => item?.id).join(","),
+    city: filter?.city,
+    state: filter?.state,
     date_from: filter?.date_from,
     date_to: filter?.date_to,
   };
@@ -110,6 +114,8 @@ export default function Clients() {
       filter?.sub_category,
       filter?.rm,
       filter?.tags,
+      filter?.city,
+      filter?.state,
       filter?.date_from,
       filter?.date_to,
     ],
@@ -476,6 +482,25 @@ export default function Clients() {
                 handleChange({ target: { name: "tags", value: newValue } })
               }
               sx={{ minWidth: "200px" }}
+            />
+
+            {/* City  */}
+            <TextField
+              label="City"
+              name="city"
+              value={filter?.city || ""}
+              onChange={handleChange}
+              size="small"
+              sx={{ width: "200px" }}
+            />
+            {/* State  */}
+            <TextField
+              label="State"
+              name="state"
+              value={filter?.state || ""}
+              onChange={handleChange}
+              size="small"
+              sx={{ width: "200px" }}
             />
 
             <DatePicker
