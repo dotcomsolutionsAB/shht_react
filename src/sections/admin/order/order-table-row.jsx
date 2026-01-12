@@ -164,25 +164,25 @@ const OrderTableRow = ({
         </Box>
         <Grid
           container
-          sx={{ py: 2, height: "calc(100% - 48px)", overflowY: "auto" }}
+          sx={{ py: 1, height: "calc(100% - 48px)", overflowY: "auto" }}
         >
           {/* first row */}
           <Grid item xs={12}>
             <Grid container>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Contact</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>
                   {`${row?.client_contact_person?.name || "-"} (${
                     row?.client_contact_person?.mobile
                   })`}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Initiated By</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>{row?.initiated_by?.name || "-"}</Typography>
               </Grid>
             </Grid>
@@ -191,18 +191,18 @@ const OrderTableRow = ({
           {/* second row */}
           <Grid item xs={12}>
             <Grid container>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Order Id</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>
                   {`${row?.so_no || "-"} (${row?.so_date})`}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Checked By</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>{row?.checked_by?.name || "-"}</Typography>
               </Grid>
             </Grid>
@@ -211,18 +211,18 @@ const OrderTableRow = ({
           {/* third row */}
           <Grid item xs={12}>
             <Grid container>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Order No</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>
                   {`${row?.order_no || "-"} (${row?.order_date})`}
                 </Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Dispatched By</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>
                   {`${row?.dispatched_by?.name || "-"} (${
                     row?.dispatched_date || "-"
@@ -234,16 +234,16 @@ const OrderTableRow = ({
           {/* fourth row */}
           <Grid item xs={12}>
             <Grid container>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Order Value</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>{row?.order_value || "-"}</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Drive Link</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography>
                   {row?.drive_link ? (
                     <Launch
@@ -269,10 +269,10 @@ const OrderTableRow = ({
           {/* fifth row */}
           <Grid item xs={12}>
             <Grid container>
-              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Invoice No</Typography>
               </Grid>
-              <Grid item xs={12} sm={6} md={9} sx={{ p: 1 }}>
+              <Grid item xs={12} sm={6} md={9} sx={{ py: 0.5, px: 1 }}>
                 <Typography>
                   {`${row?.invoice?.invoice_number || "-"} (${
                     row?.invoice?.invoice_date || "-"
