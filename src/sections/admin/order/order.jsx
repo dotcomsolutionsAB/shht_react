@@ -1,28 +1,20 @@
 import { useCallback, useState } from "react";
 
 import Card from "@mui/material/Card";
-import Table from "@mui/material/Table";
 import Button from "@mui/material/Button";
-import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
-
-import TableNoData from "../../../components/table/table-no-data";
-import TableEmptyRows from "../../../components/table/table-empty-rows";
 
 import {
   Autocomplete,
   Box,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel,
+  Divider,
+  Grid,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useGetApi } from "../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
-  emptyRows,
   ORDER_STATUS_LIST,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../utils/constants";
@@ -41,22 +33,6 @@ import { getClients } from "../../../services/admin/clients.service";
 import { useLocation } from "react-router-dom";
 
 // ----------------------------------------------------------------------
-
-const HEAD_LABEL = [
-  { id: "client", label: "Client" },
-  { id: "so_no", label: "SO Number" },
-  { id: "so_date", label: "SO Date" },
-  { id: "order_no", label: "Order No" },
-  { id: "order_date", label: "Order Date" },
-  { id: "checked_by", label: "Checked By" },
-  { id: "status", label: "Status" },
-  { id: "order_value", label: "Order Value" },
-  { id: "invoice_number", label: "Invoice Number" },
-  { id: "invoice_date", label: "Invoice Date" },
-  { id: "dispatched_by", label: "Dispatched By" },
-  { id: "drive_link", label: "Drive Link" },
-  { id: "action", label: "Action", align: "center" },
-];
 
 export default function Order() {
   const { logout } = useAuth();
@@ -130,6 +106,12 @@ export default function Order() {
   const { dataList: initiatedByList } = useGetApi({
     apiFunction: getUsers,
     body: { role: "sales" },
+  });
+
+  // api to get dispatched by list
+  const { dataList: dispatchedByList } = useGetApi({
+    apiFunction: getUsers,
+    body: { role: "dispatch" },
   });
 
   const handleModalOpen = () => {
@@ -207,6 +189,96 @@ export default function Order() {
         <Box
           sx={{
             display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 1,
+            width: "100%",
+            mb: 2,
+          }}
+        >
+          <Typography variant="h6">Statistics</Typography>
+          {/* Status Bar  */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              px: 2,
+              borderRadius: "10px",
+              bgcolor: "primary.light",
+              color: "primary.dark",
+              overflow: "auto",
+              maxWidth: "calc(100% - 200px)",
+              border: `1px solid`,
+              borderColor: "primary.main",
+            }}
+          >
+            {ORDER_STATUS_LIST?.map((item, index) => (
+              <Box
+                key={item + index}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 0.5,
+                  height: "80px",
+                }}
+              >
+                {index !== 0 && (
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{
+                      bgcolor: "primary.main",
+                      width: "1px",
+                      height: "100%",
+                    }}
+                  />
+                )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 0.5,
+                    px: 0.5,
+                    cursor: "pointer",
+                  }}
+                  onClick={() =>
+                    handleChange({
+                      target: {
+                        name: "status",
+                        value: item === filter?.status ? null : item,
+                      },
+                    })
+                  }
+                >
+                  <Typography variant="h6" sx={{ textAlign: "center" }}>
+                    0
+                  </Typography>
+                  <Typography
+                    sx={{
+                      textAlign: "center",
+                      fontSize: "12px",
+                      fontWeight:
+                        filter?.status === item
+                          ? "fontWeightBold"
+                          : "fontWeightRegular",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {item?.replaceAll("_", " ")}
+                  </Typography>
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
             flexWrap: "wrap",
             alignItems: "center",
             justifyContent: "space-between",
@@ -244,7 +316,7 @@ export default function Order() {
               }
               sx={{ minWidth: "200px" }}
             />
-            <Autocomplete
+            {/* <Autocomplete
               options={ORDER_STATUS_LIST || []}
               renderInput={(params) => (
                 <TextField {...params} label="Status" size="small" />
@@ -254,7 +326,7 @@ export default function Order() {
                 handleChange({ target: { name: "status", value: newValue } })
               }
               sx={{ minWidth: "200px" }}
-            />
+            /> */}
             <Autocomplete
               options={checkedByList || []}
               getOptionLabel={(option) => option?.name || ""}
@@ -270,7 +342,7 @@ export default function Order() {
               sx={{ minWidth: "200px" }}
             />
             <Autocomplete
-              options={checkedByList || []}
+              options={dispatchedByList || []}
               getOptionLabel={(option) => option?.name || ""}
               renderInput={(params) => (
                 <TextField {...params} label="Dispatched By" size="small" />
@@ -352,30 +424,10 @@ export default function Order() {
         ) : isError ? (
           <MessageBox errorMessage={errorMessage} />
         ) : (
-          <TableContainer sx={{ overflowY: "unset" }}>
-            <Table sx={{ minWidth: 800 }}>
-              <TableHead>
-                <TableRow>
-                  {HEAD_LABEL?.map((headCell) => (
-                    <TableCell
-                      key={headCell?.id}
-                      align={headCell?.align || "left"}
-                      sx={{
-                        width: headCell?.width,
-                        minWidth: headCell?.minWidth,
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      <TableSortLabel hideSortIcon>
-                        {headCell?.label}
-                      </TableSortLabel>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {ordersList?.map((row) => (
+          <>
+            <Grid container spacing={2}>
+              {ordersList?.map((row) => (
+                <Grid item xs={12} lg={6} key={row?.id}>
                   <OrderTableRow
                     key={row?.id}
                     refetch={refetch}
@@ -388,17 +440,12 @@ export default function Order() {
                     checkedByList={checkedByList}
                     initiatedByList={initiatedByList}
                   />
-                ))}
+                </Grid>
+              ))}
 
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, ordersCount)}
-                />
-
-                {notFound && <TableNoData query={search} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              {notFound && <Box>No Data Found</Box>}
+            </Grid>
+          </>
         )}
 
         {/* Pagination */}

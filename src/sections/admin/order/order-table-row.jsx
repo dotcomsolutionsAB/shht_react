@@ -7,7 +7,15 @@ import {
   MoreVert,
   Visibility,
 } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem, TableCell, TableRow } from "@mui/material";
+import {
+  Card,
+  IconButton,
+  Menu,
+  MenuItem,
+  Box,
+  Typography,
+  Grid,
+} from "@mui/material";
 import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
@@ -107,63 +115,174 @@ const OrderTableRow = ({
 
   return (
     <>
-      <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.client?.name || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.so_no || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.so_date ? dayjs(row?.so_date).format("DD-MM-YYYY") : "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.order_no || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.order_date ? dayjs(row?.order_date).format("DD-MM-YYYY") : "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.checked_by?.name || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.status || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.order_value || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.invoice?.invoice_number || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.invoice?.invoice_date
-            ? dayjs(row?.invoice?.invoice_date).format("DD-MM-YYYY")
-            : "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.dispatched_by?.name || "-"}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize", textAlign: "center" }}>
-          {row?.drive_link ? (
-            <Launch
+      <Card
+        sx={{
+          border: "2px solid",
+          borderColor: "primary.main",
+          height: { xs: "auto", lg: "350px" },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            py: 1,
+            px: 1.5,
+            borderBottom: "2px solid",
+            borderColor: "primary.main",
+            bgcolor: "primary.light",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Typography>{row?.client?.name || "-"}</Typography>
+            <Box
               sx={{
-                cursor: "pointer",
-                "&:hover": { color: "primary.main" },
+                border: "1px solid",
+                borderColor: "text.secondary",
+                textTransform: "capitalize",
+                px: 1,
+                py: 0.5,
+                borderRadius: 1,
+                fontSize: 12,
+                fontWeight: 500,
+                bgcolor: "grey.300",
               }}
-              onClick={() =>
-                window.open(row.drive_link, "_blank", "noopener,noreferrer")
-              }
-            />
-          ) : (
-            "-"
-          )}
-        </TableCell>
-        <TableCell sx={{ textTransform: "capitalize" }} align="center">
-          <IconButton onClick={handleMenuOpen}>
+            >
+              {row?.status ? row.status.replaceAll("_", " ") : null}
+            </Box>
+          </Box>
+          <IconButton aria-label="more" onClick={handleMenuOpen}>
             <MoreVert />
           </IconButton>
-        </TableCell>
-      </TableRow>
+        </Box>
+        <Grid
+          container
+          sx={{ py: 2, height: "calc(100% - 48px)", overflowY: "auto" }}
+        >
+          {/* first row */}
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Contact</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>
+                  {`${row?.client_contact_person?.name || "-"} (${
+                    row?.client_contact_person?.mobile
+                  })`}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Initiated By</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>{row?.initiated_by?.name || "-"}</Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          {/* second row */}
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Order Id</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>
+                  {`${row?.so_no || "-"} (${row?.so_date})`}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Checked By</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>{row?.checked_by?.name || "-"}</Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+
+          {/* third row */}
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Order No</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>
+                  {`${row?.order_no || "-"} (${row?.order_date})`}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Dispatched By</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>
+                  {`${row?.dispatched_by?.name || "-"} (${
+                    row?.dispatched_date || "-"
+                  })`}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          {/* fourth row */}
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Order Value</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>{row?.order_value || "-"}</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Drive Link</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography>
+                  {row?.drive_link ? (
+                    <Launch
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover": { color: "primary.main" },
+                      }}
+                      onClick={() =>
+                        window.open(
+                          row.drive_link,
+                          "_blank",
+                          "noopener,noreferrer"
+                        )
+                      }
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+          {/* fifth row */}
+          <Grid item xs={12}>
+            <Grid container>
+              <Grid item xs={12} sm={6} md={3} sx={{ p: 1 }}>
+                <Typography variant="subtitle1">Invoice No</Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={9} sx={{ p: 1 }}>
+                <Typography>
+                  {`${row?.invoice?.invoice_number || "-"} (${
+                    row?.invoice?.invoice_date || "-"
+                  })`}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Card>
 
       {/* Row-Specific Menu */}
       <Menu
@@ -183,10 +302,10 @@ const OrderTableRow = ({
           <Edit fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Edit
         </MenuItem>
-        <MenuItem onClick={handlePreviewModalOpen}>
+        {/* <MenuItem onClick={handlePreviewModalOpen}>
           <Visibility fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Preview
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={handleChangeStatusModalOpen}>
           <ChangeCircle fontSize="small" sx={{ cursor: "pointer", mr: 1 }} />
           Change Status

@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useGetApi } from "../../../../hooks/useGetApi";
 import { getContactPersons } from "../../../../services/admin/clients.service";
-import { ORDER_STATUS_LIST } from "../../../../utils/constants";
+// import { ORDER_STATUS_LIST } from "../../../../utils/constants";
 import ViewContactsModal from "../../clients/modals/view-contacts-modal";
 
 const getInitialState = () => ({
@@ -49,7 +49,7 @@ const AddNewOrderModal = ({
   detail,
   clientList,
   checkedByList,
-  initiatedByList,
+  // initiatedByList,
 }) => {
   const { logout } = useAuth();
 

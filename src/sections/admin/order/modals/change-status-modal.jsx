@@ -46,7 +46,7 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
   // api to get dispatched by list
   const { dataList: dispatchedByList } = useGetApi({
     apiFunction: getUsers,
-    body: { role: "staff" },
+    body: { role: "dispatch" },
     skip: !open || formData?.status !== "dispatched",
     dependencies: [open, formData?.status],
   });
@@ -76,7 +76,7 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
         },
       };
     }
-    if (formData?.status === "invoiced") {
+    if (formData?.status === "invoiced" || formData?.status === "completed") {
       payload = {
         ...formData,
         optional_fields: {
@@ -184,7 +184,8 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
                 />
               </Grid>
             )}
-            {formData?.status === "invoiced" && (
+            {(formData?.status === "invoiced" ||
+              formData?.status === "completed") && (
               <>
                 <Grid item xs={6}>
                   <TextField
@@ -193,6 +194,7 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
                     value={formData?.optional_fields?.invoice_number || ""}
                     onChange={(e) => handleChange(e, "optional_fields")}
                     fullWidth
+                    required
                   />
                 </Grid>
                 <Grid item xs={6}>
@@ -216,6 +218,9 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
                         "optional_fields"
                       )
                     }
+                    slotProps={{
+                      textField: { fullWidth: true, required: true },
+                    }}
                   />
                 </Grid>
               </>
