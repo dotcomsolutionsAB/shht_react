@@ -1,6 +1,13 @@
 import PropTypes from "prop-types";
 import { Delete, MoreVert } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem, TableCell, TableRow } from "@mui/material";
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
@@ -66,16 +73,22 @@ const InvoicesTableRow = ({
     <>
       <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
         <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.order?.client?.name || "-"}
+          <Typography sx={{ fontWeight: 600 }}>
+            {row?.order?.client?.name || "-"}
+          </Typography>
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.order?.order_no || "-"}
+          <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
+            {row?.order?.order_no || "-"}
+          </Typography>
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
           {row?.order?.so_no || "-"}
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.invoice_number || "-"}
+          <Typography sx={{ fontWeight: 600 }}>
+            {row?.invoice_number || "-"}
+          </Typography>
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
           {row?.invoice_date

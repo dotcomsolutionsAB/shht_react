@@ -9,13 +9,15 @@ import {
   Popover,
   Tooltip,
 } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import useLayout from "../hooks/uesLayout";
 import useAuth from "../hooks/useAuth";
 import {
   ArrowDropDownRounded,
+  LockRounded,
+  LogoutRounded,
   MenuOpenRounded,
   MenuRounded,
-  VerifiedUserRounded,
 } from "@mui/icons-material";
 import { useState } from "react";
 import SHHT_Logo from "../assets/logos/SHHT_Logo.png";
@@ -29,7 +31,7 @@ const MENU_OPTIONS = [
   // },
   {
     label: "Change Password",
-    icon: <VerifiedUserRounded />,
+    icon: <LockRounded />,
   },
   // {
   //   label: "Settings",
@@ -38,6 +40,7 @@ const MENU_OPTIONS = [
 ];
 
 const Header = () => {
+  const theme = useTheme();
   const { userInfo, logout } = useAuth();
   const pathname = usePathname();
   const navigate = useNavigate();
@@ -80,12 +83,14 @@ const Header = () => {
         position: "fixed",
         top: 0,
         left: 0,
-        bgcolor: "common.white",
-        color: "primary.main",
+        bgcolor: "background.paper",
+        color: "text.primary",
         zIndex: 10,
         height: layout?.headerHeight,
         width: "100%",
         overflow: "hidden",
+        borderBottom: `1px solid ${alpha(theme.palette.grey[400], 0.3)}`,
+        boxShadow: `0 8px 20px ${alpha(theme.palette.common.black, 0.06)}`,
       }}
     >
       <Box
@@ -104,15 +109,14 @@ const Header = () => {
           <Box
             sx={{
               p: "10px",
-              bgcolor: "#F9FAFB",
+              bgcolor: alpha(theme.palette.primary.main, 0.06),
               width: layout?.sidebarWidth,
               height: "100%",
               display: "flex",
               alignItems: "center",
               justifyContent: isSidebarExpanded ? "space-between" : "center",
               transition: "all 0.5s ease",
-              borderRight: "1px solid",
-              borderRightColor: "#D1D5DB",
+              borderRight: `1px solid ${alpha(theme.palette.grey[400], 0.3)}`,
             }}
           >
             {/* SHHT Logo */}
@@ -134,7 +138,7 @@ const Header = () => {
                   src={SHHT_Logo}
                   alt="SHHT Logo"
                   sx={{
-                    height: "100%",
+                    height: "75%",
                     objectFit: "contain",
                   }}
                   loading="lazy"
@@ -154,7 +158,15 @@ const Header = () => {
             </Box>
 
             {/* Icon Button */}
-            <IconButton onClick={toggleSidebar}>
+            <IconButton
+              onClick={toggleSidebar}
+              sx={{
+                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                "&:hover": {
+                  bgcolor: alpha(theme.palette.primary.main, 0.18),
+                },
+              }}
+            >
               {isSidebarExpanded ? <MenuOpenRounded /> : <MenuRounded />}
             </IconButton>
           </Box>
@@ -176,7 +188,15 @@ const Header = () => {
           }}
         >
           {layout?.isLessThanMedium && (
-            <IconButton onClick={handleDrawerOpen}>
+            <IconButton
+              onClick={handleDrawerOpen}
+              sx={{
+                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                "&:hover": {
+                  bgcolor: alpha(theme.palette.primary.main, 0.18),
+                },
+              }}
+            >
               <MenuRounded />
             </IconButton>
           )}
@@ -197,8 +217,9 @@ const Header = () => {
               noWrap
               sx={{
                 textTransform: "capitalize",
-                fontSize: { xs: "16px", sm: "20px", md: "24px" },
-                fontWeight: { xs: "600" },
+                fontSize: { xs: "16px", sm: "20px", md: "22px" },
+                fontWeight: 700,
+                color: "text.primary",
               }}
             >
               {pathname === "/" ? "Dashboard" : pathname.replace("/", "")}
@@ -221,8 +242,9 @@ const Header = () => {
               <Tooltip title={userInfo?.name || ""} placement="bottom">
                 <Typography
                   sx={{
-                    fontSize: "16px",
-                    fontWeight: "bold",
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    color: "text.secondary",
                   }}
                   noWrap
                 >
@@ -234,17 +256,21 @@ const Header = () => {
               orientation="vertical"
               sx={{
                 width: "3px",
-                height: "35%",
-                bgcolor: "error.main",
+                height: "45%",
+                bgcolor: alpha(theme.palette.primary.main, 0.4),
                 mx: 1,
               }}
             />
             <Avatar
               variant="circle"
               src={userInfo?.avatarUrl || ""}
-              sx={{ width: "43px", height: "43px" }}
+              sx={{
+                width: "40px",
+                height: "40px",
+                border: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+              }}
             />
-            <ArrowDropDownRounded sx={{ color: "black" }} />
+            <ArrowDropDownRounded sx={{ color: "text.secondary" }} />
           </Box>
 
           {/* Popover */}
@@ -290,6 +316,7 @@ const Header = () => {
                     "& > svg": {
                       fontSize: "18px",
                     },
+                    color: "primary.main",
                   }}
                 >
                   {option?.icon}
@@ -313,10 +340,11 @@ const Header = () => {
                 py: 1,
                 color: "error.main",
                 display: "flex",
-                justifyContent: "center",
+                gap: 1,
                 alignItems: "center",
               }}
             >
+              <LogoutRounded fontSize="small" />
               Logout
             </MenuItem>
           </Popover>

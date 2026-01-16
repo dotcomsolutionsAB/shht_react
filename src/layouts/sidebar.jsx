@@ -2,14 +2,15 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import { NavLink } from "react-router-dom";
 import { IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import {
   AccountCircle,
-  AvTimerRounded,
-  Bookmarks,
   CloseRounded,
   Groups,
-  Receipt,
+  ReceiptLongRounded,
   Settings,
+  ShoppingCartRounded,
+  SpaceDashboardRounded,
 } from "@mui/icons-material";
 import { ADMIN_SIDEBAR_ITEMS } from "../utils/constants";
 import { usePathname } from "../hooks/usePathname";
@@ -20,11 +21,11 @@ import useAuth from "../hooks/useAuth";
 const getIcon = (iconName) => {
   switch (iconName) {
     case "dashboard":
-      return <AvTimerRounded />;
+      return <SpaceDashboardRounded />;
     case "orders":
-      return <Bookmarks />;
+      return <ShoppingCartRounded />;
     case "invoices":
-      return <Receipt />;
+      return <ReceiptLongRounded />;
     case "clients":
       return <AccountCircle />;
     case "users":
@@ -37,6 +38,7 @@ const getIcon = (iconName) => {
 };
 
 const Sidebar = () => {
+  const theme = useTheme();
   const pathname = usePathname();
   const { userInfo, accessTo } = useAuth();
 
@@ -76,7 +78,16 @@ const Sidebar = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", height: "100%", px: 1 }}>
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        px: 1,
+        py: 1,
+        bgcolor: alpha(theme.palette.primary.main, 0.04),
+        borderRight: `1px solid ${alpha(theme.palette.grey[400], 0.2)}`,
+      }}
+    >
       {layout?.isLessThanMedium && (
         <Box
           sx={{
@@ -131,6 +142,8 @@ const Sidebar = () => {
         const isActive =
           item?.linkName === pathname ||
           item?.children?.some((child) => pathname.startsWith(child?.linkName));
+        const activeBg = alpha(theme.palette.primary.main, 0.12);
+        const hoverBg = alpha(theme.palette.primary.main, 0.08);
 
         return (
           <Box
@@ -144,14 +157,15 @@ const Sidebar = () => {
               px:
                 isSidebarExpanded || layout?.isLessThanMedium ? layout?.px : 0,
               width: "100%",
-              minHeight: "50px",
+              minHeight: "46px",
               textDecoration: "none",
-              color: "primary.main",
-              bgcolor: isActive ? "#E5E7EB" : "transparent",
+              color: isActive ? "primary.main" : "text.secondary",
+              bgcolor: isActive ? activeBg : "transparent",
               "&:hover": {
-                bgcolor: "#ccd3e0ff",
+                bgcolor: hoverBg,
+                color: "primary.main",
               },
-              borderRadius: "8px",
+              borderRadius: 1.5,
               mb: 0.5,
             }}
           >
@@ -162,11 +176,15 @@ const Sidebar = () => {
             >
               <Box
                 sx={{
-                  width: "40px",
-                  height: "50px",
+                  width: "38px",
+                  height: "46px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  borderRadius: 1,
+                  bgcolor: isActive
+                    ? alpha(theme.palette.primary.main, 0.16)
+                    : "transparent",
                 }}
                 onClick={(e) => handleMenuOpen(e, item)}
               >
@@ -174,7 +192,7 @@ const Sidebar = () => {
                   sx={{
                     p: 0.4,
                     color: "inherit",
-                    "& > svg": { fontSize: "23px" },
+                    "& > svg": { fontSize: "21px" },
                   }}
                 >
                   {getIcon(item?.iconName)}
@@ -196,7 +214,7 @@ const Sidebar = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              <Typography sx={{ fontWeight: isActive ? 600 : 400 }}>
+              <Typography sx={{ fontWeight: isActive ? 600 : 500 }}>
                 {item?.displayName}
               </Typography>
             </Box>
@@ -219,8 +237,8 @@ const Sidebar = () => {
         slotProps={{
           paper: {
             sx: {
-              bgcolor: "primary.main",
-              color: "primary.contrastText",
+              bgcolor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
               px: 1,
             },
           },

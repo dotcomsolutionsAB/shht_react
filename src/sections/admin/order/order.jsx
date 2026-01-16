@@ -7,15 +7,15 @@ import TablePagination from "@mui/material/TablePagination";
 import {
   Autocomplete,
   Box,
-  Divider,
   Grid,
   TextField,
   Typography,
 } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
+import { AddRounded, FileDownloadRounded, FilterAltRounded } from "@mui/icons-material";
 import { useGetApi } from "../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
-  ORDER_STATUS_LIST,
   ROWS_PER_PAGE_OPTIONS,
 } from "../../../utils/constants";
 import Loader from "../../../components/loader/loader";
@@ -28,13 +28,18 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { getUsers } from "../../../services/admin/users.service";
 import AddNewOrderModal from "./modals/add-new-order-modal";
-import { exportOrder, getOrders } from "../../../services/admin/orders.service";
+import {
+  exportOrder,
+  getOrders,
+  getOrderStatusCounts,
+} from "../../../services/admin/orders.service";
 import { getClients } from "../../../services/admin/clients.service";
 import { useLocation } from "react-router-dom";
 
 // ----------------------------------------------------------------------
 
 export default function Order() {
+  const theme = useTheme();
   const { logout } = useAuth();
   const { state } = useLocation();
   const [modalOpen, setModalOpen] = useState(false);
@@ -91,6 +96,10 @@ export default function Order() {
     debounceDelay: 500,
   });
 
+  const { dataList: statusCounts } = useGetApi({
+    apiFunction: getOrderStatusCounts,
+  });
+
   // api to get client list
   const { dataList: clientList } = useGetApi({
     apiFunction: getClients,
@@ -134,6 +143,16 @@ export default function Order() {
           : value,
     }));
   };
+
+  const toTitleCase = (value = "") =>
+    value
+      .toString()
+      .replaceAll("_", " ")
+      .split(" ")
+      .map((word) =>
+        word ? `${word[0].toUpperCase()}${word.slice(1)}` : ""
+      )
+      .join(" ");
 
   const handleExport = async () => {
     setIsExportLoading(true);
@@ -185,7 +204,63 @@ export default function Order() {
       <Helmet>
         <title>Orders | SHHT</title>
       </Helmet>
-      <Card sx={{ p: 2, width: "100%" }}>
+      <Card
+        sx={{
+          p: 2,
+          width: "100%",
+          borderRadius: 2,
+          boxShadow: `0 10px 28px ${alpha(theme.palette.common.black, 0.06)}`,
+          border: `1px solid ${alpha(theme.palette.grey[400], 0.25)}`,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+            mb: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+              Orders
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              Track, filter, and manage all order activity in one place.
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            <Button
+              variant="contained"
+              onClick={handleModalOpen}
+              startIcon={<AddRounded />}
+              sx={{ textTransform: "none" }}
+            >
+              Add Order
+            </Button>
+            <Button
+              color="success"
+              variant="contained"
+              startIcon={<FileDownloadRounded />}
+              sx={{ textTransform: "none" }}
+              onClick={handleExport}
+              disabled={isExportLoading}
+            >
+              {isExportLoading ? "Exporting..." : "Excel Export"}
+            </Button>
+          </Box>
+          {/* Modal */}
+          <AddNewOrderModal
+            open={modalOpen}
+            onClose={handleModalClose}
+            refetch={refetch}
+            clientList={clientList}
+            checkedByList={checkedByList}
+            initiatedByList={initiatedByList}
+          />
+        </Box>
         <Box
           sx={{
             display: "flex",
@@ -196,83 +271,82 @@ export default function Order() {
             mb: 2,
           }}
         >
-          <Typography variant="h6">Statistics</Typography>
-          {/* Status Bar  */}
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Status Overview
+          </Typography>
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               gap: 1,
-              px: 2,
-              borderRadius: "10px",
-              bgcolor: "primary.light",
+              px: 1.5,
+              py: 1,
+              borderRadius: 2,
+              bgcolor: alpha(theme.palette.primary.main, 0.08),
               color: "primary.dark",
               overflow: "auto",
               maxWidth: "calc(100% - 200px)",
-              border: `1px solid`,
-              borderColor: "primary.main",
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
             }}
           >
-            {ORDER_STATUS_LIST?.map((item, index) => (
-              <Box
-                key={item + index}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 0.5,
-                  height: "80px",
-                }}
-              >
-                {index !== 0 && (
-                  <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{
-                      bgcolor: "primary.main",
-                      width: "1px",
-                      height: "100%",
-                    }}
-                  />
-                )}
+            {(statusCounts || []).map((item, index) => {
+              const itemType = item?.type || "";
+              const isTotal = itemType.toLowerCase() === "total";
+              const isSelected = isTotal
+                ? !filter?.status
+                : filter?.status === itemType;
+              return (
                 <Box
+                  key={`${itemType}-${index}`}
                   sx={{
                     display: "flex",
-                    flexDirection: "column",
                     alignItems: "center",
-                    justifyContent: "center",
-                    gap: 0.5,
-                    px: 0.5,
+                    gap: 1,
+                    px: 1.5,
+                    py: 0.75,
+                    borderRadius: 1.5,
                     cursor: "pointer",
+                    bgcolor: isSelected
+                      ? alpha(theme.palette.primary.main, 0.18)
+                      : "transparent",
+                    border: `1px solid ${
+                      isSelected
+                        ? alpha(theme.palette.primary.main, 0.3)
+                        : "transparent"
+                    }`,
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      bgcolor: alpha(theme.palette.primary.main, 0.16),
+                    },
                   }}
                   onClick={() =>
                     handleChange({
                       target: {
                         name: "status",
-                        value: item === filter?.status ? null : item,
+                        value: isTotal
+                          ? null
+                          : itemType === filter?.status
+                          ? null
+                          : itemType,
                       },
                     })
                   }
                 >
-                  <Typography variant="h6" sx={{ textAlign: "center" }}>
-                    0
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                    {item?.count ?? 0}
                   </Typography>
                   <Typography
                     sx={{
-                      textAlign: "center",
                       fontSize: "12px",
-                      fontWeight:
-                        filter?.status === item
-                          ? "fontWeightBold"
-                          : "fontWeightRegular",
+                      fontWeight: isSelected ? 700 : 500,
                       textTransform: "capitalize",
                     }}
                   >
-                    {item?.replaceAll("_", " ")}
+                    {toTitleCase(itemType)}
                   </Typography>
                 </Box>
-              </Box>
-            ))}
+              );
+            })}
           </Box>
         </Box>
 
@@ -285,6 +359,10 @@ export default function Order() {
             gap: 1,
             mb: 2,
             width: "100%",
+            p: 1.5,
+            borderRadius: 2,
+            bgcolor: alpha(theme.palette.grey[100], 0.7),
+            border: `1px solid ${alpha(theme.palette.grey[400], 0.2)}`,
           }}
         >
           <Box
@@ -295,13 +373,25 @@ export default function Order() {
               gap: 1,
             }}
           >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                color: "text.secondary",
+                pr: 0.5,
+              }}
+            >
+              <FilterAltRounded fontSize="small" />
+              <Typography variant="subtitle2">Filters</Typography>
+            </Box>
             {/* Search  */}
             <TextField
               value={search || ""}
               onChange={handleSearch}
               placeholder="Search by SO No, Order No"
               size="small"
-              sx={{ width: "250px" }}
+              sx={{ width: "240px" }}
             />
 
             <Autocomplete
@@ -361,7 +451,7 @@ export default function Order() {
               slotProps={{
                 textField: {
                   size: "small",
-                  sx: { width: "200px" },
+                  sx: { width: "180px" },
                 },
               }}
               disableFuture
@@ -378,7 +468,7 @@ export default function Order() {
               slotProps={{
                 textField: {
                   size: "small",
-                  sx: { width: "200px" },
+                  sx: { width: "180px" },
                 },
               }}
               disableFuture
@@ -390,32 +480,6 @@ export default function Order() {
               }
             />
           </Box>
-
-          <Box sx={{ ml: "auto" }}>
-            {/* Add Order*/}
-            <Button variant="contained" onClick={handleModalOpen}>
-              + Add Order
-            </Button>
-            {/* Excel Export */}
-            <Button
-              color="success"
-              variant="contained"
-              sx={{ ml: 2 }}
-              onClick={handleExport}
-              disabled={isExportLoading}
-            >
-              {isExportLoading ? "Exporting..." : "Excel Export"}
-            </Button>
-          </Box>
-          {/* Modal */}
-          <AddNewOrderModal
-            open={modalOpen}
-            onClose={handleModalClose}
-            refetch={refetch}
-            clientList={clientList}
-            checkedByList={checkedByList}
-            initiatedByList={initiatedByList}
-          />
         </Box>
 
         {/* Table */}
@@ -443,7 +507,29 @@ export default function Order() {
                 </Grid>
               ))}
 
-              {notFound && <Box>No Data Found</Box>}
+              {notFound && (
+                <Box
+                  sx={{
+                    width: "100%",
+                    py: 4,
+                    textAlign: "center",
+                    color: "text.secondary",
+                    borderRadius: 2,
+                    border: `1px dashed ${alpha(
+                      theme.palette.grey[400],
+                      0.4
+                    )}`,
+                    bgcolor: alpha(theme.palette.grey[100], 0.6),
+                  }}
+                >
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                    No orders match the current filters.
+                  </Typography>
+                  <Typography variant="body2">
+                    Try adjusting your search or clearing filters to see more results.
+                  </Typography>
+                </Box>
+              )}
             </Grid>
           </>
         )}

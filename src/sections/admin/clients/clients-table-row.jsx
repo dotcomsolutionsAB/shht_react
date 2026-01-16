@@ -1,6 +1,15 @@
 import PropTypes from "prop-types";
 import { Delete, Edit, Key, MoreVert } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem, TableCell, TableRow } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
@@ -26,6 +35,7 @@ const ClientsTableRow = ({
   rmList,
   salesPersonList,
 }) => {
+  const theme = useTheme();
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -120,7 +130,9 @@ const ClientsTableRow = ({
     <>
       <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
         <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.name || "-"}
+          <Typography sx={{ fontWeight: 600 }}>
+            {row?.name || "-"}
+          </Typography>
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
           {row?.category?.name || "-"}
@@ -129,7 +141,29 @@ const ClientsTableRow = ({
           {row?.sub_category?.name || "-"}
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
-          {row?.tags?.map((item) => item?.name)?.join(", ")}
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+            {(row?.tags || []).length ? (
+              row?.tags?.map((item) => (
+                <Box
+                  key={item?.id}
+                  sx={{
+                    px: 0.8,
+                    py: 0.2,
+                    borderRadius: 1,
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    color: "primary.main",
+                    bgcolor: alpha(theme.palette.primary.main, 0.12),
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                  }}
+                >
+                  {item?.name}
+                </Box>
+              ))
+            ) : (
+              "-"
+            )}
+          </Box>
         </TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
           {row?.city || "-"}

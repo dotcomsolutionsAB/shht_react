@@ -66,6 +66,11 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
   const handleChangeStatusSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData?.status) {
+      toast.error("Please select a status to continue.");
+      return;
+    }
+
     let payload = formData;
 
     if (formData?.status === "dispatched") {
@@ -104,12 +109,24 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
     }
   };
 
+  const toTitleCase = (value = "") =>
+    value
+      .toString()
+      .replaceAll("_", " ")
+      .split(" ")
+      .map((word) =>
+        word ? `${word[0].toUpperCase()}${word.slice(1)}` : ""
+      )
+      .join(" ");
+
   useEffect(() => {
-    setFormData((preValue) => ({
-      ...preValue,
-      status: orderStatus?.current_status,
-    }));
-  }, [orderStatus]);
+    if (!open) return;
+    setFormData({
+      order_id: detail?.order_no,
+      status: "",
+      optional_fields: null,
+    });
+  }, [open, detail?.order_no]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -148,6 +165,7 @@ const ChangeStatusModal = ({ open, onClose, detail, refetch }) => {
             <Grid item xs={6}>
               <Autocomplete
                 options={orderStatus?.allowed_status || []}
+                getOptionLabel={(option) => toTitleCase(option)}
                 renderInput={(params) => (
                   <TextField {...params} label="Status" required fullWidth />
                 )}

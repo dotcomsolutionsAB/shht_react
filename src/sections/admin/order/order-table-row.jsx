@@ -16,6 +16,7 @@ import {
   Typography,
   Grid,
 } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
@@ -37,6 +38,24 @@ const OrderTableRow = ({
   checkedByList,
   initiatedByList,
 }) => {
+  const theme = useTheme();
+  const statusColors = {
+    pending: theme.palette.warning.main,
+    completed: theme.palette.success.main,
+    short_closed: theme.palette.error.main,
+    cancelled: theme.palette.error.main,
+  };
+  const statusColor =
+    statusColors[row?.status] || theme.palette.primary.main;
+  const formatStatusLabel = (value = "") =>
+    value
+      .toString()
+      .replaceAll("_", " ")
+      .split(" ")
+      .map((word) =>
+        word ? `${word[0].toUpperCase()}${word.slice(1)}` : ""
+      )
+      .join(" ");
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -117,9 +136,20 @@ const OrderTableRow = ({
     <>
       <Card
         sx={{
-          border: "2px solid",
-          borderColor: "primary.main",
+          border: `1px solid ${alpha(theme.palette.grey[400], 0.2)}`,
+          borderRadius: 2.5,
+          boxShadow: `0 12px 26px ${alpha(theme.palette.common.black, 0.06)}`,
           height: { xs: "auto", lg: "350px" },
+          overflow: "hidden",
+          background: `linear-gradient(180deg, ${alpha(
+            theme.palette.common.white,
+            0.9
+          )} 0%, ${alpha(theme.palette.grey[50], 0.9)} 100%)`,
+          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+          "&:hover": {
+            transform: "translateY(-4px)",
+            boxShadow: `0 16px 34px ${alpha(theme.palette.common.black, 0.1)}`,
+          },
         }}
       >
         <Box
@@ -129,9 +159,8 @@ const OrderTableRow = ({
             justifyContent: "space-between",
             py: 1,
             px: 1.5,
-            borderBottom: "2px solid",
-            borderColor: "primary.main",
-            bgcolor: "primary.light",
+            borderBottom: `1px solid ${alpha(statusColor, 0.25)}`,
+            bgcolor: alpha(statusColor, 0.12),
           }}
         >
           <Box
@@ -141,30 +170,50 @@ const OrderTableRow = ({
               gap: 1,
             }}
           >
-            <Typography>{row?.client?.name || "-"}</Typography>
+            <Typography sx={{ fontWeight: 700, fontSize: "1rem" }}>
+              {row?.client?.name || "-"}
+            </Typography>
             <Box
               sx={{
-                border: "1px solid",
-                borderColor: "text.secondary",
+                border: `1px solid ${alpha(statusColor, 0.35)}`,
                 textTransform: "capitalize",
                 px: 1,
-                py: 0.5,
+                py: 0.25,
                 borderRadius: 1,
                 fontSize: 12,
-                fontWeight: 500,
-                bgcolor: "grey.300",
+                fontWeight: 600,
+                bgcolor: alpha(statusColor, 0.18),
+                color: statusColor,
               }}
             >
-              {row?.status ? row.status.replaceAll("_", " ") : null}
+              {row?.status ? formatStatusLabel(row.status) : null}
             </Box>
           </Box>
-          <IconButton aria-label="more" onClick={handleMenuOpen}>
+          <IconButton
+            aria-label="more"
+            onClick={handleMenuOpen}
+            sx={{
+              bgcolor: alpha(theme.palette.primary.main, 0.08),
+              "&:hover": {
+                bgcolor: alpha(theme.palette.primary.main, 0.16),
+              },
+            }}
+          >
             <MoreVert />
           </IconButton>
         </Box>
         <Grid
           container
-          sx={{ py: 1, height: "calc(100% - 48px)", overflowY: "auto" }}
+          sx={{
+            py: 1,
+            height: "calc(100% - 48px)",
+            overflowY: "auto",
+            "& .MuiTypography-subtitle1": {
+              color: "text.secondary",
+              fontWeight: 600,
+              fontSize: "0.85rem",
+            },
+          }}
         >
           {/* first row */}
           <Grid item xs={12}>
@@ -173,7 +222,7 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Contact</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
                   {`${row?.client_contact_person?.name || "-"} (${
                     row?.client_contact_person?.mobile
                   })`}
@@ -183,7 +232,9 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Initiated By</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>{row?.initiated_by?.name || "-"}</Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
+                  {row?.initiated_by?.name || "-"}
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -195,7 +246,7 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Order Id</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
                   {`${row?.so_no || "-"} (${row?.so_date})`}
                 </Typography>
               </Grid>
@@ -203,7 +254,9 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Checked By</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>{row?.checked_by?.name || "-"}</Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
+                  {row?.checked_by?.name || "-"}
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -215,7 +268,7 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Order No</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
                   {`${row?.order_no || "-"} (${row?.order_date})`}
                 </Typography>
               </Grid>
@@ -223,7 +276,7 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Dispatched By</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
                   {`${row?.dispatched_by?.name || "-"} (${
                     row?.dispatched_date || "-"
                   })`}
@@ -238,13 +291,15 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Order Value</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>{row?.order_value || "-"}</Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
+                  {row?.order_value || "-"}
+                </Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
                 <Typography variant="subtitle1">Drive Link</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={3} sx={{ py: 0.5, px: 1 }}>
-                <Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
                   {row?.drive_link ? (
                     <Launch
                       sx={{
@@ -273,7 +328,7 @@ const OrderTableRow = ({
                 <Typography variant="subtitle1">Invoice No</Typography>
               </Grid>
               <Grid item xs={12} sm={6} md={9} sx={{ py: 0.5, px: 1 }}>
-                <Typography>
+                <Typography sx={{ fontWeight: 600, color: "text.primary" }}>
                   {`${row?.invoice?.invoice_number || "-"} (${
                     row?.invoice?.invoice_date || "-"
                   })`}

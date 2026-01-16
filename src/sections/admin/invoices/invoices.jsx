@@ -18,7 +18,10 @@ import {
   TableRow,
   TableSortLabel,
   TextField,
+  Typography,
 } from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
+import { FileDownloadRounded, FilterAltRounded } from "@mui/icons-material";
 import { useGetApi } from "../../../hooks/useGetApi";
 import {
   DEFAULT_LIMIT,
@@ -53,6 +56,7 @@ const HEAD_LABEL = [
 ];
 
 export default function Invoices() {
+  const theme = useTheme();
   const { logout } = useAuth();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
@@ -176,7 +180,46 @@ export default function Invoices() {
       <Helmet>
         <title>Invoices | SHHT</title>
       </Helmet>
-      <Card sx={{ p: 2, width: "100%" }}>
+      <Card
+        sx={{
+          p: 2,
+          width: "100%",
+          borderRadius: 2,
+          boxShadow: `0 10px 28px ${alpha(theme.palette.common.black, 0.06)}`,
+          border: `1px solid ${alpha(theme.palette.grey[400], 0.25)}`,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+            mb: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+              Invoices
+            </Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              Review billing activity and dispatch details.
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+            <Button
+              color="success"
+              variant="contained"
+              startIcon={<FileDownloadRounded />}
+              sx={{ textTransform: "none" }}
+              onClick={handleExport}
+              disabled={isExportLoading}
+            >
+              {isExportLoading ? "Exporting..." : "Excel Export"}
+            </Button>
+          </Box>
+        </Box>
         <Box
           sx={{
             display: "flex",
@@ -186,6 +229,10 @@ export default function Invoices() {
             gap: 1,
             mb: 2,
             width: "100%",
+            p: 1.5,
+            borderRadius: 2,
+            bgcolor: alpha(theme.palette.grey[100], 0.7),
+            border: `1px solid ${alpha(theme.palette.grey[400], 0.2)}`,
           }}
         >
           <Box
@@ -196,13 +243,25 @@ export default function Invoices() {
               gap: 1,
             }}
           >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                color: "text.secondary",
+                pr: 0.5,
+              }}
+            >
+              <FilterAltRounded fontSize="small" />
+              <Typography variant="subtitle2">Filters</Typography>
+            </Box>
             {/* Search  */}
             <TextField
               value={search || ""}
               onChange={handleSearch}
               placeholder="Search"
               size="small"
-              sx={{ width: "200px" }}
+              sx={{ width: "220px" }}
             />
 
             <Autocomplete
@@ -237,7 +296,7 @@ export default function Invoices() {
               slotProps={{
                 textField: {
                   size: "small",
-                  sx: { width: "200px" },
+                  sx: { width: "180px" },
                 },
               }}
               disableFuture
@@ -253,7 +312,7 @@ export default function Invoices() {
               slotProps={{
                 textField: {
                   size: "small",
-                  sx: { width: "200px" },
+                  sx: { width: "180px" },
                 },
               }}
               disableFuture
@@ -265,18 +324,6 @@ export default function Invoices() {
               }
             />
           </Box>
-
-          <Box sx={{ ml: "auto" }}>
-            {/* Excel Export */}
-            <Button
-              color="success"
-              variant="contained"
-              onClick={handleExport}
-              disabled={isExportLoading}
-            >
-              {isExportLoading ? "Exporting..." : "Excel Export"}
-            </Button>
-          </Box>
         </Box>
 
         {/* Table */}
@@ -285,10 +332,24 @@ export default function Invoices() {
         ) : isError ? (
           <MessageBox errorMessage={errorMessage} />
         ) : (
-          <TableContainer sx={{ overflowY: "unset" }}>
-            <Table sx={{ minWidth: 800 }}>
+          <TableContainer
+            sx={{
+              overflowY: "unset",
+              borderRadius: 2,
+              border: `1px solid ${alpha(theme.palette.grey[400], 0.2)}`,
+            }}
+          >
+            <Table sx={{ minWidth: 900 }}>
               <TableHead>
-                <TableRow>
+                <TableRow
+                  sx={{
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    "& th": {
+                      fontWeight: 700,
+                      color: "text.primary",
+                    },
+                  }}
+                >
                   {HEAD_LABEL?.map((headCell) => (
                     <TableCell
                       key={headCell?.id}

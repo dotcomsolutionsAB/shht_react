@@ -30,3 +30,6 @@ export const getOrderStatus = async (body) =>
 
 export const updateOrderStatus = async (body) =>
   await postRequest(`${ORDERS_PATH}/changeStatus`, body);
+
+export const getOrderStatusCounts = async () =>
+  await getRequest(`${ORDERS_PATH}/status_counts`);

@@ -1,6 +1,15 @@
 import PropTypes from "prop-types";
 import { Delete, Edit, Key, MoreVert } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem, TableCell, TableRow } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  TableCell,
+  TableRow,
+  Typography,
+} from "@mui/material";
+import { alpha, useTheme } from "@mui/material/styles";
 import { memo, useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import useAuth from "../../../hooks/useAuth";
@@ -17,6 +26,7 @@ const UsersTableRow = ({
   dataCount,
   setPage,
 }) => {
+  const theme = useTheme();
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -83,10 +93,37 @@ const UsersTableRow = ({
     }
   }, []);
 
+  const renderStatus = (value) => {
+    const isActive = value === "1";
+    const color = isActive ? theme.palette.success.main : theme.palette.grey[600];
+    return (
+      <Box
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          px: 1,
+          py: 0.35,
+          borderRadius: 1,
+          fontSize: "0.75rem",
+          fontWeight: 600,
+          color,
+          bgcolor: alpha(color, 0.12),
+          border: `1px solid ${alpha(color, 0.2)}`,
+        }}
+      >
+        {isActive ? "Yes" : "No"}
+      </Box>
+    );
+  };
+
   return (
     <>
       <TableRow hover tabIndex={-1} key={row?.id} role="checkbox">
-        <TableCell>{row?.name || "-"}</TableCell>
+        <TableCell>
+          <Typography sx={{ fontWeight: 600 }}>
+            {row?.name || "-"}
+          </Typography>
+        </TableCell>
         <TableCell>{row?.username || "-"}</TableCell>
         <TableCell sx={{ textTransform: "capitalize" }}>
           {row?.role || "-"}
@@ -97,9 +134,9 @@ const UsersTableRow = ({
           {row?.order_views || "-"}
         </TableCell>
 
-        <TableCell>{row?.change_status === "1" ? "Yes" : "No"}</TableCell>
-        <TableCell>{row?.whatsapp_status === "1" ? "Yes" : "No"}</TableCell>
-        <TableCell>{row?.email_status === "1" ? "Yes" : "No"}</TableCell>
+        <TableCell>{renderStatus(row?.change_status)}</TableCell>
+        <TableCell>{renderStatus(row?.whatsapp_status)}</TableCell>
+        <TableCell>{renderStatus(row?.email_status)}</TableCell>
 
         <TableCell align="center">
           <IconButton onClick={handleMenuOpen}>
