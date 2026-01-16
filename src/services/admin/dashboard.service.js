@@ -4,5 +4,5 @@ const DASHBOARD_PATH = "/dashboard";
 
 // class group apis
 
-export const getDashboardStats = async () =>
-  await getRequest(`${DASHBOARD_PATH}`);
+export const getDashboardStats = async (params = {}) =>
+  await getRequest(`${DASHBOARD_PATH}`, params);

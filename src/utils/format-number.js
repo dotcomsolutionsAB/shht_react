@@ -48,6 +48,23 @@ export function fCurrency(inputValue, options) {
 
 // ----------------------------------------------------------------------
 
+export function fCurrencyINR(inputValue, options) {
+  const number = processInput(inputValue);
+  if (number === null) return "";
+
+  const fm = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    ...options,
+  }).format(number);
+
+  return fm;
+}
+
+// ----------------------------------------------------------------------
+
 export function fPercent(inputValue, options) {
   const locale = DEFAULT_LOCALE;
 
